@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  Practise_1_4
+//  Practise_1_9
 //
 //  Created by YangHan on 2018/1/1.
 //  Copyright © 2018年 YangHan. All rights reserved.
@@ -12,10 +12,9 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    int v1, v2;
-    cout << "输入两个数字 : ";
-    cin >> v1 >> v2;
-    cout << v1 << " 和 " << v2 << " 的乘积是 " << v1 * v2 << endl;
+    int sum = 0, i = 50;
+    while (i <= 100) sum += i++;
+    cout << "结果为 : " << sum << endl;
     
     return 0;
 }

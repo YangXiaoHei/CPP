@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  Practise_1_4
+//  Practise_1_6
 //
 //  Created by YangHan on 2018/1/1.
 //  Copyright © 2018年 YangHan. All rights reserved.
@@ -11,11 +11,10 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    
-    int v1, v2;
-    cout << "输入两个数字 : ";
-    cin >> v1 >> v2;
-    cout << v1 << " 和 " << v2 << " 的乘积是 " << v1 * v2 << endl;
-    
+    /**
+     *  不合法
+     因为 ; 是一行语句的分隔符，在分隔符后继续使用 << 这个双目运算符，然后并没有为它提供左值
+     会报编译错误
+     */
     return 0;
 }
