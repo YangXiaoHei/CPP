@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include "Tool.hpp"
 
 using namespace std;
 
@@ -32,6 +33,8 @@ using namespace std;
  
  */
 
+
+
 void displayCurrentBits() {
     cout << (sizeof(bool) << 3) << endl;
     cout << (sizeof(char) << 3) << endl;
@@ -47,9 +50,20 @@ void displayCurrentBits() {
     cout << (sizeof(long double) << 3) << endl;
 }
 
+/**
+ *  含有无符号类型的表达式
+ 
+ */
+void unsignedAndSigned() {
+    unsigned u = 10;
+    int i = -42;
+    cout << i + i << endl;
+    cout << u + i << endl;
+}
+
 int main(int argc, const char * argv[]) {
     displayCurrentBits();
-    
+    float_binary_str(1);
     
     return 0;
 }
