@@ -150,11 +150,65 @@ void pointer() {
     r = 100;
     
     cout << a << endl;
+}
+
+/**
+ *  指向指针的引用
+ */
+void relPointer() {
+    int i = 42;
     
+    int *p;
+    
+    int *&r = p;
+    
+    r = &i;
+    
+    *r = 0;
+    
+    cout << i << endl;
+}
+
+/**
+ *  const 限定符
+ */
+int get_size() { return 1; }
+void constSpecifier() {
+    const int j = get_size();  // 运行时初始化
+    const int i = 42;          // 编译时初始化
+//    const int k; const 对象必须被初始化
+}
+
+void constReference() {
+    int a = 10, b = 20;
+    
+    // 不能通过常量引用去修改 a 的值
+    const int &r = a;
+    
+    // 常量引用可以用字面量初始化，也可以用表达式初始化
+    const int &r1 = 42;   // 绑定到了临时量上
+    const int &r2 = a * b;
+//    int &r3 = r1;
+    
+    {
+        int i = 42;
+        int &r1 = i;
+        const int &r2 = i;
+        r1 = 0;
+//        r2 = 0;   不允许通过 r2 修改 i 的值
+    }
+    
+    {
+        int i = 10;
+        int *const p = &i;
+//        int *const p1; 常量指针必须被初始化
+    }
 }
 
 
+
+
 int main(int argc, const char * argv[]) {
-    pointer();
+    constReference();
     return 0;
 }
