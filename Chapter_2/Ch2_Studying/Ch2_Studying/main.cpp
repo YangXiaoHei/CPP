@@ -62,8 +62,6 @@ void unsignedAndSigned() {
 }
 
 int main(int argc, const char * argv[]) {
-    displayCurrentBits();
-    float_binary_str(1);
     
     return 0;
 }

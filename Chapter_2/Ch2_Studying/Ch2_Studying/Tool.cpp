@@ -45,9 +45,9 @@ void float_binary_str(float a) {
     union u_ {
         float f;
         struct s_ {
-            unsigned int sign       : 1;
-            unsigned int exp        : 8;
             unsigned int mantissa   : 23;
+            unsigned int exp        : 8;
+            unsigned int sign       : 1;
         } s;
     } u;
     u.f = a;
@@ -60,13 +60,53 @@ void float_binary_str(float a) {
     printf("\n");
 }
 void double_binary_str(double a) {
-    
+    union u_ {
+        float f;
+        struct s_ {
+            unsigned long mantissa   : 52;
+            unsigned long exp        : 11;
+            unsigned long sign       : 1;
+        } s;
+    } u;
+    u.f = a;
+    printf("%-2d  ", u.s.sign);
+    for (int i = 10; i >= 0; i--)
+        printf("%-2d", (u.s.exp >> i) & 1);
+    printf("  ");
+    for (int i = 51; i >= 0; i--)
+        printf("%-2d", (int)((u.s.mantissa >> i) & 1));
+    printf("\n");
 }
 
-void char_hex_str(char a);
-void short_hex_str(short a);
-void int_hex_str(int a);
-void long_hex_str(long a);
-void long_long_hex_str(long long a);
-void float_hex_str(float a);
-void double_hex_str(double a);
+void char_hex_str(char a) {
+    printf("%x\n", a);
+}
+void short_hex_str(short a) {
+    printf("%x\n", a);
+}
+void int_hex_str(int a) {
+    unsigned char *byte = (unsigned char *)&a;
+    printf("%x %x\n",*(byte + 1), *byte);
+}
+void long_hex_str(long a) {
+    unsigned char *byte = (unsigned char *)&a;
+    printf("%x %x %x %x\n", *(byte + 3), *(byte + 2), *(byte + 1), *byte);
+}
+void long_long_hex_str(long long a) {
+    unsigned char *byte = (unsigned char *)&a;
+    for (int i = 7; i >= 0; i--)
+        printf("%x ", byte[i]);
+    printf("\n");
+}
+void float_hex_str(float a) {
+    unsigned char *byte = (unsigned char *)&a;
+    for (int i = 3; i >= 0; i--)
+        printf("%x ", byte[i]);
+    printf("\n");
+}
+void double_hex_str(double a) {
+    unsigned char *byte = (unsigned char *)&a;
+    for (int i = 7; i >= 0; i--)
+        printf("%x ", byte[i]);
+    printf("\n");
+}
