@@ -57,11 +57,21 @@ void displayCurrentBits() {
 void unsignedAndSigned() {
     unsigned u = 10;
     int i = -42;
-    cout << i + i << endl;
-    cout << u + i << endl;
+    cout << "i      =   "; int_binary_str(i);
+    cout << "u      =   "; int_binary_str(u);
+    cout << "i + u  =   "; int_binary_str(u + i);
+    cout << "i + u  =   " << i + u << endl;
+    
+    cout << endl;
+    
+    unsigned u1 = 42, u2 = 10;
+    cout << "u2       =   "; int_binary_str(u2);
+    cout << "u1       =   "; int_binary_str(u1);
+    cout << "u2 - u1  =   "; int_binary_str(u2 - u1);
+    cout << "u2 - u1  =   " << u2 - u1 << endl;
 }
 
 int main(int argc, const char * argv[]) {
-    
+    unsignedAndSigned();
     return 0;
 }
