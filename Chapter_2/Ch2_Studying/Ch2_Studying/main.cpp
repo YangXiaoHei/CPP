@@ -33,8 +33,6 @@ using namespace std;
  
  */
 
-
-
 void displayCurrentBits() {
     cout << (sizeof(bool) << 3) << endl;
     cout << (sizeof(char) << 3) << endl;
@@ -106,10 +104,57 @@ void literal() {
         f or F   float
         l or L   long double
      */
+}
+
+/**
+ *  如果列表初始化用的初始值类型和声明不一致，编译器报错
+ */
+void listInitialized() {
+    { int units_sold = 0; }
+    { int units_sold = {0}; }
+    { int units_sold(0); }
+    { int units_sold{0}; }
+    
+    long double d = 3.1415926536;
+    
+//    int a{d};  // 编译器报错
+    int a = d;  // 编译器不报错
+//    double dd{d};  // 编译器报错
+    
+    long l = 123;
+//    int b{l};  // 编译器报错
+    
+    float f = 3.14f;
+//    int i{f};  编译器报错
+}
+
+/**
+ *  引用
+ */
+void reference() {
+    // 引用必须被初始化
+    int ival = 1024;
+    int &refVal = ival;
+//    int &refVal2;
+}
+
+/**
+ *  指针
+ */
+void pointer() {
+    
+    int a = 1;
+    int *p = &a;
+    int &r = *p;
+    
+    r = 100;
+    
+    cout << a << endl;
     
 }
 
+
 int main(int argc, const char * argv[]) {
-    escapeSequence();
+    pointer();
     return 0;
 }
