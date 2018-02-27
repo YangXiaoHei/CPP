@@ -205,10 +205,128 @@ void constReference() {
     }
 }
 
+void constexprAndConstExpression() {
+    const int max_files = 20;           // 常量表达式
+    const int limit = max_files + 1;    // 常量表达式
+    int staff_size = 27;                // 非常量表达式
+    const int sz = get_size();          // 非常量表达式
+    
+    /**
+     *  将变量声明为 constexpr 类型以便由编译器来验证变量的值是否是一个常量表达式
+     
+        声明 constexpr 时用到的类型必须有所限制，比如 ( 字面值类型 literal type ) 算术类型，引用，指针
+     
+        尽管指针和引用都能定义成 constexpr， 但它们的初始值受到严格限制，一个 constexpr 指针的初始值必须是 nullptr 或者 0
+        或者存储与某个固定地址中的对象
+     
+        函数体内定义的变量一般来说并非存放在固定的地址中，因此 constexpr 不能指向这样的变量，
+        而定义于所有函数体之外的对象其地址固定不变，能用来初始化 constexpr 指针
+        在函数体内定义的超出函数本身的变量，也拥有固定地址， constexpr 也能指向这样的对象
+     */
+    {
+        constexpr int mf = 20;
+        constexpr int limit = mf + 1;
+//        constexpr int sz = get_size();  // 只有当 size 是一个 constexpr 函数时才是一条正确的声明语句
+    }
+    
+    /**
+     *  ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+     */
+    const int *p = nullptr;
+    constexpr int *q = nullptr;
+    
+    // p 是指向常量的指针
+    // q 是常量指针
+}
+
+int j = 0;
+constexpr int i = 42;           // i 是整型常量
+constexpr const int *p = &i;    // p 是常量指针，指向整型常量 i
+constexpr int *p1 = &j;         // p1 是常量指针，指向整型 j
+
+
+/**
+ *  ⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+ 
+    const char *cstr 是对 const pstring cstr 的错误理解
+ */
+void pointer_const_alias() {
+    typedef char * pstring;
+    const pstring cstr = 0;  // cstr 是指向 char 的常量指针
+    const pstring *ps;       //
+}
+void aliasConstTest() {
+    
+    typedef char *pstring;
+    
+    pstring str = (char *)calloc(4, sizeof(char));
+    str[0] = '1';
+    str[1] = '2';
+    str[2] = '3';
+    str[3] = '\0';
+    
+    pstring str1 = (char *)calloc(4, sizeof(char));
+    str1[0] = '4';
+    str1[1] = '5';
+    str1[2] = '6';
+    str1[3] = '\0';
+    
+    pstring str2 = (char *)calloc(4, sizeof(char));
+    str2[0] = '7';
+    str2[1] = '8';
+    str2[2] = '9';
+    str2[3] = '\0';
+    
+    pstring *ps = (pstring *)calloc(3, sizeof(pstring));
+    ps[0] = str;
+    ps[1] = str1;
+    ps[2] = str2;
+    
+    const pstring *ps1 = ps;
+//    ps1[0] = nullptr; 指向常量的指针
+    
+    pstring * const ps2 = ps;
+    ps2[0] = nullptr;   // 常量指针
+    
+    if (ps2[0])  cout << ps2[0] << endl;
+    if (ps2[1])  cout << ps2[1] << endl;
+    if (ps2[2])  cout << ps2[2] << endl;
+}
+
+void auto_type() {
+    /**
+     *  auto 会忽略掉顶层 const 而留下底层 const
+     */
+    
+    int i = 0;
+    
+    const int ci = i, &cr = ci;
+    
+    auto b = ci;    // b 是一个整数
+    auto c = cr;    // c 是一个整数
+    auto d = &i;    // d 是一个整型指针
+    auto e = &ci;   // e 是一个指向整数常量的指针
+    
+    /**
+     *  如果希望推断出的 auto 类型是一个顶层 const 需要明确指出
+     */
+    const auto f = ci;
+    auto &g = ci;   // 整型常量引用
+//    auto &h = 42;   // auto 不能推断出顶层 const，因此不能为非常量引用绑定字面量
+    const auto &j = 42; // 明确指出需要推断出常量引用，因此可以绑定字面量
+    
+}
+
+
+
+
+
+
+
 
 
 
 int main(int argc, const char * argv[]) {
-    constReference();
+    aliasConstTest();
     return 0;
 }
