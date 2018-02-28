@@ -18,7 +18,5 @@ int main(int argc, const char * argv[]) {
     
     auto &m = ci, *p = &ci;
     
-    
-    
     return 0;
 }

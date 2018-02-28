@@ -75,8 +75,8 @@ void unsignedAndSigned() {
 void escapeSequence() {
     cout << "Hi \x4dO\115!\n";
     /**
-     *  \x 后跟着 1 或多个 十六进制数字
-        或者 \ 后跟着 1, 2, 3 个八进制数字
+     *  \x 后跟着 1 或多个十六进制数字
+        或者 \ 后跟着最多 3 位八进制数字
      */
     cout << "\1234" << endl;
     // 如果反斜线后面跟着的八进制数字超过 3 个，只有前3个数字与 \ 构成转义序列
@@ -253,7 +253,7 @@ constexpr int *p1 = &j;         // p1 是常量指针，指向整型 j
 void pointer_const_alias() {
     typedef char * pstring;
     const pstring cstr = 0;  // cstr 是指向 char 的常量指针
-    const pstring *ps;       //
+    const pstring *ps;       // ps 是指向常量指针的指针
 }
 void aliasConstTest() {
     
@@ -317,16 +317,40 @@ void auto_type() {
     
 }
 
+int f() {
+    return 1;
+}
 
-
-
-
-
-
-
+void decltypeStudy() {
+    decltype(f()) sum = 32;
+    /**
+     *  如果 decltype 使用的表达式是一个变量，那么 decltype 返回该变量的类型（包括顶层 const）
+     */
+    const int ci = 0, &cj = ci;
+    decltype(ci) x = 0;  // x 是一个常量
+    decltype(cj) y = x; // y 是一个常量引用
+//    decltype(cj) z;   // z 是一个常量引用
+//    x = 10;   不能修改 x 的值，因为 decltype 的推导包含顶层 const
+    
+    /**
+     *  如果 decltype 使用的表达式不是一个变量
+     */
+    int i = 42, *p = &i, &r = i;
+    decltype(r + 0) b;  // b 是一个未初始化的 int
+    /**
+     *  解引用指针可以得到指针所指的对象，而且还能给这个对象赋值
+        因此 decltype(*p) 的结果类型就是 int&，而非 int
+     */
+//    decltype(*p) c; // c 是一个引用，必须初始化
+    
+    decltype(i) d = 1;      // d 是 int 类型
+    decltype((i)) dd = d;   // dd 是 int& 类型
+    dd = 20;
+    cout << dd << endl;
+}
 
 
 int main(int argc, const char * argv[]) {
-    aliasConstTest();
+    decltypeStudy();
     return 0;
 }
