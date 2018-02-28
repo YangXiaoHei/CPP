@@ -7,6 +7,56 @@
 //
 
 #include "Tool.hpp"
+#include <time.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b) {
+    int t = *a; *a = *b; *b = t;
+}
+
+int *ints(int lo, int hi) {
+    srand((unsigned)time(NULL));
+    int size = hi - lo + 1;
+    int *arr = new int[size];
+    int j = 0, i = lo;
+    while (i <= hi) arr[j++] = i++;
+    for (int k = 0; k < size; k++) {
+        int r = rand() % (size - k) + k;
+        swap(arr + r, arr + k);
+    }
+    return arr;
+}
+
+void print(int *a, int size) {
+    for (int i = 0; i < size; i++)
+        printf("%-3d", a[i]);
+    printf("\n");
+}
+
+int *ints(int size, int lo, int hi) {
+    srand((unsigned)time(NULL));
+    int *arr = new int[size];
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % (hi - lo + 1) + lo;
+    }
+    return arr;
+}
+int *ascendInts(int lo, int hi) {
+    int size = hi - lo + 1;
+    int *arr = new int[size];
+    for (int i = 0; i < size; i++) {
+        arr[i] = lo++;
+    }
+    return arr;
+}
+int *descendInts(int hi, int lo) {
+    int size = hi - lo + 1;
+    int *arr = new int[size];
+    for (int i = 0; i < size; i++) {
+        arr[i] = hi--;
+    }
+    return arr;
+}
 
 void char_binary_str(char a) {
     for (int i = 7; i >= 0; i--)

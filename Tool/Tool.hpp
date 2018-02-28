@@ -11,6 +11,12 @@
 
 #include <stdio.h>
 
+int *ints(int lo, int hi);
+int *ints(int size, int lo, int hi);
+int *ascendInts(int lo, int hi);
+int *descendInts(int hi, int lo);
+void print(int *a, int size);
+
 void char_binary_str(char a);
 void short_binary_str(short a);
 void int_binary_str(int a);
