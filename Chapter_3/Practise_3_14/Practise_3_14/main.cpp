@@ -1,22 +1,24 @@
 //
 //  main.cpp
-//  Practise_3_09
+//  Practise_3_14
 //
 //  Created by YangHan on 2018/2/28.
 //  Copyright © 2018年 YangHan. All rights reserved.
 //
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    /**
-     *  不合法
-     */
-    string s;
-    cout << s[0] << endl;
+    vector<int> ivec;
+    int i;
+    while (cin >> i)
+        ivec.push_back(i);
+    
+    cout << ivec.size() << endl;
     
     return 0;
 }
