@@ -28,8 +28,9 @@ int *ints(int lo, int hi) {
 }
 
 void print(int *a, int size) {
-    for (int i = 0; i < size; i++)
-        printf("%-3d", a[i]);
+    for (int i = 0; i < size; i++) {
+        printf("%-4d", a[i]);
+    }
     printf("\n");
 }
 
