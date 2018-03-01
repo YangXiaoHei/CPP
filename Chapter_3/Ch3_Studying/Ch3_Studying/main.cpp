@@ -8,10 +8,7 @@
 
 #include <iostream>
 
-using std::string;
-using std::cin;
-using std::cout;
-using std::endl;
+using namespace std;
 
 void definitionAndInitilizeString() {
     string s1;
@@ -35,11 +32,43 @@ void readStringUtilCarriage() {
         cout << line << endl;
 }
 
-
-
+void pointerAndArray() {
+    {
+        string nums[] = {"one", "two", "three"};
+        string *p = &nums[0];
+        cout << sizeof(nums) << endl;
+        string *p2 = nums; // 等价于 p2 = &nums[0]
+    }
+    {
+        int ia[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        auto ia2 = ia;
+        auto ia3 = &ia[0];
+        
+        /**
+         *  使用 auto 时，数组退化为指针
+            使用 decltype 时，还是个数组
+         */
+        decltype(ia) ia4 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//        ia4 = ia2;  不能把整型指针赋值给整型数组
+        ia4[1] = 3;
+        for (int i = 0; i < 10; i++) {
+            cout << ia4[i] << " ";
+        }
+        cout << endl;
+    }
+    {
+        /**
+         *  标准库函数 begin() 和 end()
+         */
+        int ia[] = {0, 1, 2, 3, 4, 5, 6};
+        int *b = begin(ia);
+        int *e = end(ia);
+        while (b != e)
+            cout << *(b++) << endl;
+    }
+}
 
 int main(int argc, const char * argv[]) {
-    readStringUtilCarriage();
-    
+    pointerAndArray();
     return 0;
 }
