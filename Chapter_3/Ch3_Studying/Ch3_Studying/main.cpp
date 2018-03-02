@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -68,7 +69,16 @@ void pointerAndArray() {
     }
 }
 
+void initializeVectorWithArray() {
+    int int_arr[] = {1, 2, 3, 4, 5, 6, 7};
+    vector<int> ivec(begin(int_arr), end(int_arr));
+    for (int i = 0; i < ivec.size(); i++) {
+        cout << ivec[i] << endl;
+    }
+}
+
+
 int main(int argc, const char * argv[]) {
-    pointerAndArray();
+    initializeVectorWithArray();
     return 0;
 }
