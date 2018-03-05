@@ -67,6 +67,7 @@ void pointerAndArray() {
         while (b != e)
             cout << *(b++) << endl;
     }
+    
 }
 
 void initializeVectorWithArray() {
@@ -76,7 +77,6 @@ void initializeVectorWithArray() {
         cout << ivec[i] << endl;
     }
 }
-
 
 int main(int argc, const char * argv[]) {
     initializeVectorWithArray();
