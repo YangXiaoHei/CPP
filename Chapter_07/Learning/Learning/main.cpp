@@ -9,12 +9,15 @@
 #include <iostream>
 #include "Sales_data.hpp"
 #include "Screen.hpp"
+#include "NameLookup.hpp"
+#include "Constructor.hpp"
+
+using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    Screen s(50, 50, 'c');
-//    s.display(cout);
-    s.set('a').display(cout);
+    Constructor c;
+    
     
     return 0;
 }
