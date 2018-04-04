@@ -7,16 +7,10 @@
 //
 
 #include <iostream>
-#include "Sales_data.hpp"
-#include "Screen.hpp"
-#include "NameLookup.hpp"
-#include "Constructor.hpp"
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    
-    Constructor c;
     
     
     return 0;
