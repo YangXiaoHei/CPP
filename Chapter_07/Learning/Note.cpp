@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 //this 是一个常量指针
 
@@ -131,8 +132,60 @@ namespace YH3 {
     }
 }
 
+// 先初始化再赋值和初始化的区别
+
+// 成员初始化顺序
+
+// 默认实参和构造函数 --> 如果一个构造函数为所有参数都提供了默认实参，则它实际上也定义了默认构造函数
+
+// 委托构造函数
+
+// 隐式的类类型转换 和 对隐式转换的抑制
+// explicit 只针对一个实参的构造函数有效，需要多个实参的构造函数不能隐式转换，所以也就无需指定为 explicit
+// explicit 只能出现在类内部
+ namespace YH4 {
+ class A {
+     public:
+         A(int a, std::string s) : a(a), b(s) {}
+         A(int a) : a(a) {}
+//       explicit A(int a) : a(a) {}
+//       explicit A(std::string s) : b(s) {}
+         A(std::string s) : b(s) {}
+         int a;
+         std::string b;
+     };
+ }
+ void fun(YH4::A a) {
+     std::cout << a.a << std::endl;
+     std::cout << a.b << std::endl;
+ }
+ int yh_main(int argc, const char * argv[]) {
+     fun(std::string("sdfsdf"));
+     fun(5);
+     return 0;
+ }
+
+// explicit 只能用于直接初始化
+// 为转换显示使用构造函数 static_cast< Class-Type > (参数)
+namespace YH5 {
+    class data {
+    public:
+        explicit data(std::string a) : s(a) {}
+//        data(std::string a) : s(a) {}
+        std::string s;
+    };
+    int yh_main() {
+        data d("strg"); // correct
+//        data a = std::string("sfsfsdf");
+        data a = std::string("sdfsdfsdf");
+    }
+}
+
+// 类的静态成员
 
 
+
+ 
 
 
 
