@@ -124,23 +124,86 @@ namespace YH2 {
             cout << "B dealloc" << endl;
         }
     };
-    
 }
 
+namespace YH3 {
+    class numbered {
+        friend void f(const numbered&);
+    private:
+        int id;
+    public:
+        static int counter;
+        numbered() {
+            id = counter++;
+        }
+        numbered(const numbered& n) {
+            id = counter++;
+        }
+    };
+    int numbered::counter = 0;
+    void f(const numbered& n) { cout << n.id << endl; }
+}
+
+/**
+ *  Practise 13.18
+ */
+namespace Practise_13_18 {
+    class Employee {
+        friend ostream& operator<<(ostream &, const Employee&);
+    private:
+        string name;
+        unsigned long ID;
+    public:
+        static int counter;
+        Employee() : Employee("") {}
+        Employee(string n) : name(n) { ID = counter++; }
+    };
+    int Employee::counter = 0;
+    ostream& operator<<(ostream& os, const Employee& e) {
+        if (e.name.length() != 0) {
+            os << e.name << " " << e.ID;
+        } else {
+            os << e.ID;
+        }
+        return os;
+    }
+}
+
+namespace Practise_13_22 {
+    class HasPtr {
+        friend ostream& operator<<(ostream& os, const HasPtr& hp);
+    public:
+        HasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& hp) {
+            ps = new string(*hp.ps);
+            i = hp.i;
+        }
+        HasPtr& operator=(const HasPtr& hp) {
+            ps = new string(*hp.ps);
+            i = hp.i;
+            return *this;
+        }
+        ~HasPtr() {
+            delete ps;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    ostream& operator<<(ostream& os, const HasPtr& hp) {
+        printf("%ld", (long)hp.ps);
+        return os;
+    }
+}
 
 int main(int argc, const char * argv[]) {
     
-    using namespace YH2;
+    using namespace Practise_13_22;
     
-    {
-        vector<B> bv;
-        B b;
-        cout << "----" << endl;
-        bv.push_back(b);
-        cout << "will end" << endl;
-    }
-    cout << "end" << endl;
-    
+    HasPtr hp("yanghan");
+    cout << hp << endl;
+    HasPtr hp1 = hp;
+    cout << hp1 << endl;
     
     return 0;
 }
