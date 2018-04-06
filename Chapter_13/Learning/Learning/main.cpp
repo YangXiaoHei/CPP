@@ -10,6 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include <time.h>
+#include <set>
 
 using namespace std;
 
@@ -326,9 +327,145 @@ namespace YH4 {
     }
 }
 
+namespace YH5 {
+    class Folder;
+    /**
+     *  Message
+     */
+    class Message {
+        friend ostream& operator<<(ostream& os, const Message& f);
+        friend ostream& operator<<(ostream& os, const Folder& f);
+        friend class Folder;
+    private:
+        set<Folder*> folders;
+        string contents;
+        void addToFolder(const Message& m);
+        void removeFromFolder();
+    public:
+        explicit Message(const string &str = "") : contents(str) {}
+        Message(const Message& m);
+        Message& operator=(const Message& m);
+        ~Message();
+        
+        Message& save(Folder&);
+        Message& remove(Folder&);
+    };
+    
+    /**
+     *  Folder
+     */
+    class Folder {
+        friend ostream& operator<<(ostream& os, const Folder& f);
+    private:
+        string folderName;
+        set<Message *> msgs;
+    public:
+        Folder(const string& s = "") : folderName(s) {}
+        Folder& addMsg(Message *m);
+        Folder& remMsg(Message *m);
+        ~Folder();
+    };
+    
+    /**
+     *  Message Define
+     */
+    Message& Message::save(YH5::Folder& f) {
+        folders.insert(&f);
+        f.addMsg(this);
+        return *this;
+    }
+    Message& Message::remove(YH5::Folder &f) {
+        folders.erase(&f);
+        f.remMsg(this);
+        return *this;
+    }
+    void Message::addToFolder(const YH5::Message &m) {
+        for (auto f : m.folders)
+            f->addMsg(this);
+    }
+    void Message::removeFromFolder() {
+        for (auto f : folders)
+            f->remMsg(this);
+    }
+    Message::Message(const Message &m) : contents(m.contents), folders(m.folders) {
+        addToFolder(m);
+    }
+    Message& Message::operator=(const YH5::Message &m) {
+        removeFromFolder();
+        contents = m.contents;
+        folders = m.folders;
+        addToFolder(m);
+        return *this;
+    }
+    ostream& operator<<(ostream& os, const Message& f) {
+        os << f.contents;
+        return os;
+    }
+    Message::~Message() {
+        for (auto f : folders)
+            f->remMsg(this);
+    }
+    
+    /**
+     *  Folder
+     */
+    Folder& Folder::addMsg(YH5::Message *m) {
+        msgs.insert(m);
+        return *this;
+    }
+    Folder& Folder::remMsg(YH5::Message *m) {
+        msgs.erase(m);
+        return *this;
+    }
+    ostream& operator<<(ostream& os, const Folder& f) {
+        os << f.folderName << endl;
+        for (auto it = f.msgs.begin(); it != f.msgs.end(); ++it) {
+            os << "\t" << **it << endl;
+        }
+        return os;
+    }
+    Folder::~Folder() {
+        for (auto m : msgs)
+            m->folders.erase(this);
+    }
+    
+    void test() {
+        
+        Message a("Hello World"), b("C++ Primer"), c("YangHan is pig"), d("Algorithms");
+        Folder InBox("InBox"), Flagged("Flagged"), Drafts("Drafts");
+        
+        a.save(InBox).save(Flagged).save(Drafts);
+        b.save(InBox).save(Drafts);
+        c.save(Flagged).save(Drafts);
+        d.save(Flagged).save(InBox);
+        
+        cout << InBox << endl;
+        cout << Flagged << endl;
+        cout << Drafts << endl;
+
+        a = c;
+
+        cout << "------" << endl;
+        cout << InBox << endl;
+        cout << Flagged << endl;
+        cout << Drafts << endl;
+        
+        Message f = d;
+        
+        cout << "------" << endl;
+        cout << InBox << endl;
+        cout << Flagged << endl;
+        cout << Drafts << endl;
+    }
+}
+
+
+
+
+
 int main(int argc, const char * argv[]) {
     
-    YH4::test();
+    YH5::test();
     
     
     return 0;
