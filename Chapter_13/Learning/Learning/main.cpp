@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <time.h>
 
 using namespace std;
 
@@ -179,7 +181,9 @@ namespace Practise_13_22 {
             i = hp.i;
         }
         HasPtr& operator=(const HasPtr& hp) {
-            ps = new string(*hp.ps);
+            auto newp = new string(*hp.ps);  // 防范自赋值
+            delete ps;
+            ps = newp;
             i = hp.i;
             return *this;
         }
@@ -196,14 +200,136 @@ namespace Practise_13_22 {
     }
 }
 
+
+namespace Practise_13_27 {
+    class HasPtr {
+    private:
+        string *ps;
+        int i;
+        int *refCount;
+    public:
+        HasPtr(string s = string()) : ps(new string(s)), i(0) {
+            refCount = new int;
+            *refCount = 1;
+            cout << "constructor ref = " << *refCount << endl;
+        }
+        HasPtr(const HasPtr& hp) : ps(hp.ps), i(hp.i) {
+            refCount = hp.refCount;
+            ++*refCount;
+            cout << "copy constructor ref = " << *refCount << endl;
+        }
+        HasPtr& operator=(const HasPtr& hp) {
+            if (--*refCount == 0) {
+                delete ps;
+                delete refCount;
+            }
+            ++*hp.refCount;
+            ps = hp.ps;
+            refCount = hp.refCount;
+            cout << "assignment ref = " << *refCount << endl;
+            return *this;
+        }
+        ~HasPtr() {
+            --*refCount;
+            cout << "dealloc ref = " << *refCount << endl;
+            if (*refCount == 0) {
+                cout << "dealloc release " << endl;
+                delete ps;
+                delete refCount;
+            }
+        }
+    };
+    void test() {
+        HasPtr a, b = a, c = b;
+        HasPtr d;
+        a = d;
+    }
+}
+
+
+namespace YH4 {
+    class Item {
+        // 比较器
+        friend int operator<(const Item& a, const Item& b);
+        friend int operator>(const Item& a, const Item& b);
+        friend int operator<=(const Item& a, const Item& b);
+        friend int operator>=(const Item& a, const Item& b);
+        friend int operator==(const Item& a, const Item& b);
+        friend int operator!=(const Item& a, const Item& b);
+        // 打印
+        friend ostream& operator<<(ostream& os, const Item& it);
+        // swap 用于优化交换性能
+        friend void swap(Item &a, Item &b);
+    private:
+        string *product_name;
+        ssize_t *ref;
+        int ID;
+    public:
+        static int counter;
+        Item(string pname) :
+        product_name(new string(pname)), ID(counter++), ref(new ssize_t(1)) {}
+        Item(const Item& it) : product_name(it.product_name), ID(it.ID), ref(it.ref) {
+            ++*ref;
+        }
+        Item& operator=(const Item& it) {
+            if (--*ref == 0) {
+                delete product_name;
+                delete ref;
+            }
+            ++*it.ref;
+            product_name = it.product_name;
+            ref = it.ref;
+            ID = it.ID;
+            return *this;
+        }
+        ~Item() {
+            if (--*ref == 0) {
+                delete product_name;
+                delete ref;
+                
+            }
+        }
+    };
+    int Item::counter = 0;
+    // 比较器
+    int operator<(const Item& a, const Item& b) { return a.ID < b.ID; }
+    int operator>(const Item& a, const Item& b) { return a.ID > b.ID; }
+    int operator<=(const Item& a, const Item& b) { return a.ID <= b.ID; }
+    int operator>=(const Item& a, const Item& b) { return a.ID >= b.ID; }
+    int operator==(const Item& a, const Item& b) { return a.ID == b.ID; }
+    int operator!=(const Item& a, const Item& b) { return a.ID != b.ID; }
+    // 打印
+    ostream& operator<<(ostream& os, const Item& it) {
+        os << "{" << *it.product_name << " " << it.ID << "} ";
+        return os;
+    }
+    // 交换
+    void swap(Item& a, Item& b) {
+        int ID = a.ID;
+        a.ID = b.ID;
+        b.ID = ID;
+    }
+    
+    void test() {
+        vector<Item> v;
+        string pname = "YangHan";
+        for (int i = 0; i < 1000000; i++) {
+            v.push_back(Item(pname));
+        }
+        /**
+         *  使用自定义的 swap 可以让性能快上一倍....
+         */
+        clock_t s = clock();
+        random_shuffle(v.begin(), v.end());
+        clock_t e = clock();
+        printf("time cost : %.3f\n", (e - s) * 1.0 / CLOCKS_PER_SEC );
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
-    using namespace Practise_13_22;
+    YH4::test();
     
-    HasPtr hp("yanghan");
-    cout << hp << endl;
-    HasPtr hp1 = hp;
-    cout << hp1 << endl;
     
     return 0;
 }
