@@ -506,13 +506,62 @@ namespace Practise_12_21 {
     }
 }
 
+namespace Practise_12_23 {
+    void test() {
+        const char *c = "hahaha";
+        const char *b = "yanghan";
+        ssize_t len = strlen(c) + strlen(b) + 1;
+        char *p = new char[len];
+        strcpy(p, c);
+        strcpy(p + strlen(c), b);
+        p[len - 1] = 0;
+        cout << p << endl;
+    }
+    void test1() {
+        string a("haha"), b("helloworld");
+        cout << a + b << endl;
+    }
+}
 
+namespace Practise_12_24 {
+    void test() {
+        cout << "size ?" << endl;
+        ssize_t size;
+        cin >> size;
+        cin.ignore();  // 忽略换行
+        char *input = new char[size + 1]();
+        cout << "input string" << endl;
+        cin.get(input, size + 1);
+        cout << input << endl;
+        delete [] input;
+    }
+}
 
+namespace Practise_12_26 {
+    void test() {
+        allocator<string> alloc;
+        auto p = alloc.allocate(5);
+        auto q = p;
+        string s;
+        while (q != p + 5 && cin >> s && s != "end") {
+            alloc.construct(q++, s);
+        }
+        size_t cnt = q - p;
+        auto t = p;
+        for (size_t i = 0; i < cnt; i++) {
+            cout << *t++ << endl;
+        }
+        while (p != q) {
+            alloc.destroy(--q);
+        }
+        alloc.deallocate(p, 5);
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
     
-    Practise_12_21::test();
+    Practise_12_26::test();
     
     return 0;
 }
