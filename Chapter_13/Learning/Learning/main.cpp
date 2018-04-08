@@ -614,18 +614,70 @@ namespace YH7 {
     }
 }
 
-namespace Practise_13_39 {
-    
-    
-    
-    
+namespace Practise_13_44 {
+    class String {
+        friend ostream& operator<<(ostream& os, const String& s);
+    public:
+        String() : value(nullptr), len(0) { cout << "默认构造" << endl; }
+        String(const char *s) {
+            size_t l = strlen(s) + 1;
+            auto c = alloc.allocate(l);
+            for (int i = 0; i < l - 1; i++) {
+                c[i] = *s++;
+            }
+            c[l - 1] = '\0';
+            value = c;
+            len = l;
+        }
+        String(const String& s) {
+            value = alloc.allocate(s.len);
+            uninitialized_copy(s.value, s.value + s.len, value);
+            len = s.len;
+            cout << "拷贝构造" << endl;
+        }
+        String& operator=(const String& s) {
+            cout << "拷贝赋值运算符" << endl;
+            alloc.deallocate(value, len);
+            value = alloc.allocate(s.len);
+            uninitialized_copy(s.value, s.value + s.len, value);
+            len = s.len;
+            return *this;
+        }
+        unsigned hashCode() {
+            unsigned h = 0;
+            for (int i = 0; i < len - 1; i++) {
+                h = h * 31 + (int)value[i];
+            }
+            return h;
+        }
+        ~String() {
+            alloc.deallocate(value, len);
+        }
+    private:
+        static allocator<char> alloc;
+        char *value;
+        size_t len;
+        
+    };
+    allocator<char> String::alloc;
+    ostream& operator<<(ostream& os, const String& s) {
+        os << s.value;
+        return os;
+    }
+    void test() {
+        vector<String> v;
+        for (int i = 0; i < 4; i++) {
+            char buf[10];
+            int l = sprintf(buf, "%d", i);
+            buf[l] = '\0';
+            v.push_back(String(buf));
+        }
+    }
 }
-
-
 
 int main(int argc, const char * argv[]) {
     
-    YH7::test();
+    Practise_13_44::test();
     
     
     return 0;
