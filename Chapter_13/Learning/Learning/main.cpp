@@ -675,6 +675,23 @@ namespace Practise_13_44 {
     }
 }
 
+namespace YH8 {
+    struct X {
+        int i;  // 内置类型可以移动
+        string s;  // string 定义了自己的移动操作
+    };
+    struct hasX {
+        X mem;  // X 有合成的移动操作
+    };
+    void test() {
+        X x, x2 = std::move(x);
+        hasX hx, hx2 = std::move(hx);
+    }
+}
+
+
+
+
 int main(int argc, const char * argv[]) {
     
     Practise_13_44::test();
