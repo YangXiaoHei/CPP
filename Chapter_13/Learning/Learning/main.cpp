@@ -459,13 +459,173 @@ namespace YH5 {
     }
 }
 
+namespace YH6 {
+//    class StrVec {
+//    private:
+//        static allocator<string> alloc;
+//        void chk_n_alloc() {
+//            if (size() == capacity())
+//                reallocate();
+//        }
+//        pair<string *, string *> alloc_n_copy(const string*, const string*);
+//        void free();
+//        void reallocate();
+//        string *elements;
+//        string *first_free;
+//        string *cap;
+//    public:
+//        StrVec(): elements(nullptr), first_free(nullptr), cap(nullptr) {}
+//        StrVec(const StrVec &);
+//        StrVec &operator=(const StrVec &);
+//        ~StrVec();
+//        void push_back(const string&);
+//        size_t size() const { return first_free - elements; }
+//        size_t capacity() const { return cap - elements; }
+//        string *begin() const { return elements; }
+//        string *end() const { return first_free; }
+//    };
+//    void StrVec::push_back(const string &s) {
+//        chk_n_alloc();
+//        alloc.construct(first_free++, s);
+//    }
+//    pair<string *, string *> StrVec::alloc_n_copy(const string *b, const string *e) {
+//        // 分配一段长度为 e - b 的未构造内存
+//        auto data = alloc.allocate(e - b);
+//        // 用 b 到 e 间的元素初始化这段内存
+//        // unitialized_copy 返回构造后的最后一个位置
+//        return { data, uninitialized_copy(b, e, data) };
+//    }
+//    void StrVec::free() {
+//        if (elements) {
+//            for (auto p = first_free; p != elements; ) {
+//                alloc.destroy(--p);
+//            }
+//            alloc.deallocate(elements, cap - elements);
+//        }
+//    }
+//    StrVec::StrVec(const StrVec &s) {
+//        auto newdata = alloc_n_copy(s.begin(), s.end());
+//        elements = newdata.first;
+//        first_free = cap = newdata.second;
+//    }
+//    StrVec& StrVec::operator=(const YH6::StrVec &s) {
+//        auto data = alloc_n_copy(s.begin(), s.end());
+//        free();
+//        elements = data.first;
+//        first_free = cap = data.second;
+//        return *this;
+//    }
+//    void StrVec::reallocate() {
+//        auto newcapacity = size() ? size() * 2 : 1;
+//        auto newdata = alloc.allocate(newcapacity);
+//        auto dest = newdata;
+//        auto elem = elements;
+//        for (size_t i = 0; i < size(); ++i) {
+//            alloc.construct(dest++, std::move(*elem++));
+//        }
+//        free();
+//        elements = newdata;
+//        first_free = dest;
+//        cap = elements + newcapacity;
+//    }
+}
 
+namespace YH7 {
+    class Vector {
+        friend ostream& operator<<(ostream& os, const Vector& v);
+    public:
+        size_t capacity() const { return _cap - _elements; }
+        size_t size() const { return _first_free - _elements; }
+        Vector() : _first_free(nullptr), _elements(nullptr), _cap(nullptr) {}
+        Vector(const Vector& s) {
+            auto d = alloc_n_copy(s.begin(), s.end());
+            _elements = d.first;
+            _first_free = _cap = d.second;
+        }
+        Vector& operator=(const Vector& s) {
+            auto d = alloc_n_copy(s.begin(), s.end());
+            free();
+            _elements = d.first;
+            _cap = _first_free = d.second;
+            return *this;
+        }
+        string *begin() const { return _elements; }
+        string *end() const { return _first_free; }
+        void push_back(const string &s) {
+            chk_n_alloc();
+            _alloc.construct(_first_free++, s);
+        }
+        ~Vector() {
+            free();
+        }
+    private:
+        static allocator<string> _alloc;
+        string *_elements;
+        string *_first_free;
+        string *_cap;
+        void chk_n_alloc() {
+            if (size() == capacity()) {
+                reallocate();
+            }
+        }
+        pair<string *, string *> alloc_n_copy(const string *b, const string *e) {
+            auto newdata = _alloc.allocate(e - b);
+            return { newdata, uninitialized_copy(b, e, newdata) };
+        }
+        void reallocate() {
+            size_t newcapacity = size() ? size() * 2 : 1;
+            auto newdata = _alloc.allocate(newcapacity);
+            auto dest = newdata;
+            auto elem = _elements;
+            for (size_t i = 0; i < size(); ++i) {
+                _alloc.construct(dest++, std::move(*elem++));
+            }
+            free();
+            _elements = newdata;
+            _first_free = dest;
+            _cap = _elements + newcapacity;
+        }
+        void free() {
+            for (auto p = _elements; p != _first_free; ++p) {
+                _alloc.destroy(p);
+            }
+            _alloc.deallocate(_elements, capacity());
+        }
+    };
+    allocator<string> Vector::_alloc;
+    ostream& operator<<(ostream& os, const Vector& v) {
+        for (auto b = v.begin(); b != v.end(); ++b) {
+            os << *b << endl;
+        }
+        return os;
+    }
+    void test() {
+        Vector v;
+        for (int i = 0; i < 10; i++) {
+            char s[10];
+            int l = sprintf(s, "%d", i);
+            s[l] = '\0';
+            v.push_back(string(s));
+        }
+        
+        Vector v1 = v, v2 = v;
+        v1 = v2;
+        cout << v1 << endl;
+    }
+}
+
+namespace Practise_13_39 {
+    
+    
+    
+    
+}
 
 
 
 int main(int argc, const char * argv[]) {
     
-    YH5::test();
+    YH7::test();
     
     
     return 0;
