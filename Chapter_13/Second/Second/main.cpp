@@ -63,7 +63,7 @@ namespace Practise_13_02 {
     }
 }
 
-namespace Practise_13_03 {
+namespace Practise_13_03_ {
     class StrBlob {
         friend ostream& operator<<(ostream&, const StrBlob&);
     public:
@@ -109,7 +109,7 @@ namespace Practise_13_03 {
 
 
 
-namespace Practise_13_04 {
+namespace Practise_13_03 {
     class StrBlobPtr;
     class StrBlob {
         friend class StrBlobPtr;
@@ -191,7 +191,7 @@ namespace Practise_13_04 {
     }
 }
 
-namespace Practise_13_05 {
+namespace Practise_13_04 {
     class Point {
     public:
         Point() { cout << "构造" << endl; }
@@ -215,7 +215,7 @@ namespace Practise_13_05 {
     }
 }
 
-namespace Practise_13_06 {
+namespace Practise_13_05 {
     class HasPtr {
         INPUT_DECLARE(HasPtr)
     public:
@@ -248,6 +248,44 @@ namespace Practise_13_06 {
         cout << b << endl;
     }
 }
+
+namespace Practise_13_06 {
+    void test() {
+        /**
+         *  拷贝赋值运算符是一个叫 operator= 的函数，当赋值发生的时候使用它
+            它将赋值运算符右侧的对象中的每个非 static 成员拷贝给 左侧对象的相应非 static 成员
+            当你自己没有定义拷贝赋值运算符时，编译器自动帮你合成一个
+         */
+    }
+}
+
+namespace Practise_13_07 {
+    void test() {
+        /**
+         *  StrBlob shared_ptr 的引用计数 + 1
+            StrBlobPtr weak_ptr 不会增加引用计数
+         */
+    }
+}
+
+namespace Practise_13_08 {
+    class HasPtr {
+    public:
+        HasPtr(const string& s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& h) : ps(new string(*h.ps)), i(h.i) {}
+        HasPtr& operator=(const HasPtr& h) {
+            auto d = new string(*h.ps);
+            delete ps;
+            ps = d;
+            i = h.i;
+            return *this;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+}
+
 
 int main(int argc, const char * argv[]) {
 
