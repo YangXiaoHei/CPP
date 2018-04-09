@@ -191,11 +191,67 @@ namespace Practise_13_04 {
     }
 }
 
+namespace Practise_13_05 {
+    class Point {
+    public:
+        Point() { cout << "构造" << endl; }
+        Point(const Point& p) { cout << "拷贝构造" << endl; }
+    };
+    Point global;
+    Point foo_bar(Point arg) {
+        cout << "----" << endl;
+        Point local = arg;
+        cout << "1" << endl;
+        Point *heap = new Point(global);
+        cout << "2" << endl;
+        *heap = local;
+        cout << "3" << endl;
+        Point pa[4] = { local, *heap };
+        cout << "4" << endl;
+        return *heap;
+    }
+    void test() {
+        foo_bar(Point());
+    }
+}
 
+namespace Practise_13_06 {
+    class HasPtr {
+        INPUT_DECLARE(HasPtr)
+    public:
+        HasPtr(const string& s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& p) : ps(new string(*p.ps)), i(p.i) {}
+        HasPtr& operator=(const HasPtr& p) {
+            auto d = new string(*p.ps);
+            delete ps;
+            ps = d;
+            i = p.i;
+            return *this;
+        }
+        ~HasPtr() {
+            delete ps;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    INPUT_DEFINE(HasPtr, {
+        os << "address : " << value.ps << " content : " << *value.ps;
+    })
+    void test() {
+        HasPtr a("xixi"), b("heihei");
+        cout << a << endl;
+        cout << b << endl;
+        HasPtr c = a;
+        cout << c << endl;
+        b = c;
+        cout << b << endl;
+    }
+}
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_04::test();
+    Practise_13_06::test();
     
     
     return 0;
