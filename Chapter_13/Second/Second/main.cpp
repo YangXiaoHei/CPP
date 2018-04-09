@@ -10,21 +10,28 @@
 #include <string.h>
 #include <vector>
 
+#define INPUT_DECLARE(_type_) friend ostream& operator<<(ostream&, const _type_&);
+#define INPUT_DEFINE(_type_, _closure_) \
+ostream& operator<<(ostream& os, const _type_& value) \
+{\
+do { _closure_ } while(0); \
+return os;\
+}
+
 using namespace std;
 
 namespace YH {
     class MyStr {
-        friend ostream& operator<<(ostream &os, const MyStr& m);
+        INPUT_DECLARE(MyStr)
     public:
         MyStr(const char *s) : val(s) { cout << "constrctors" << endl; }
         MyStr(const MyStr& m) : val(m.val) { cout << "copy constrctors" << endl; }
     private:
         string val;
     };
-    ostream& operator<<(ostream &os, const MyStr& m) {
-        os << m.val;
-        return os;
-    }
+    INPUT_DEFINE(MyStr, {
+        os << value.val;
+    })
     void haha(MyStr m) {
         cout << m << endl;
     }
@@ -102,9 +109,93 @@ namespace Practise_13_03 {
 
 
 
+namespace Practise_13_04 {
+    class StrBlobPtr;
+    class StrBlob {
+        friend class StrBlobPtr;
+        INPUT_DECLARE(StrBlob)
+    public:
+        typedef vector<string>::size_type size_type;
+        StrBlob() : data(make_shared<vector<string>>()) {}
+        StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
+        size_type size() const { return data->size(); }
+        bool empty() const { return data->empty(); }
+        StrBlobPtr begin();
+        StrBlobPtr end();
+        void push_back(const string& s) {
+            data->push_back(s);
+        }
+        void pop_back() {
+            check(0, "empty");
+            data->pop_back();
+        }
+        const string& front() const {
+            check(0, "empty");
+            return data->front();
+        }
+        const string& back() const {
+            check(0, "empty");
+            return data->back();
+        }
+    private:
+        shared_ptr<vector<string>> data;
+        void check(size_type i, const string& s) const {
+            if (i >= data->size()) {
+                throw out_of_range(s);
+            }
+        }
+    };
+    INPUT_DEFINE(StrBlob, {
+        for (auto it = value.data->begin(); it != value.data->end(); ++it) {
+            os << *it << endl;
+        }
+    })
+    class StrBlobPtr {
+    public:
+        StrBlobPtr(StrBlob &b) : wptr(b.data), cur(0) {}
+        StrBlobPtr(StrBlob &b, size_t sz) : wptr(b.data), cur(sz) {}
+        bool operator!=(const StrBlobPtr &s) { return cur != s.cur; }
+        string& operator*() {
+            auto it = check(cur, "out of range");
+            return (*it)[cur];
+        }
+        StrBlobPtr& operator++() {
+            ++cur;
+            return *this;
+        }
+    private:
+        size_t cur;
+        weak_ptr<vector<string>> wptr;
+        shared_ptr<vector<string>> check(size_t i, const string& s) const {
+            auto ret = wptr.lock();
+            if (!ret) {
+                throw runtime_error("not exist err");
+            }
+            if (i >= ret->size()) {
+                throw out_of_range("out of range");
+            }
+            return ret;
+        }
+    };
+    StrBlobPtr StrBlob::begin() {
+        return StrBlobPtr(*this);
+    }
+    StrBlobPtr StrBlob::end() {
+        return StrBlobPtr(*this, data->size());
+    }
+    void test() {
+        StrBlob s = {"haha", "xixi", "heihei"};
+        for (StrBlobPtr b = s.begin(); b != s.end(); ++b) {
+            cout << *b << endl;
+        }
+    }
+}
+
+
+
 int main(int argc, const char * argv[]) {
 
-    Practise_13_03::test();
+    Practise_13_04::test();
     
     
     return 0;
