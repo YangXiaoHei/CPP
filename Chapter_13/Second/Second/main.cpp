@@ -369,10 +369,27 @@ namespace Practise_13_13 {
     }
 }
 
+namespace Practise_13_14 {
+    struct X {
+        X(const string& s = string()) : s(new string(s)) {}
+        ~X() { delete s; }
+    private:
+        string *s;
+    };
+    void f(X x) {
+        X a = x;
+    }
+    void test() {
+        X b;
+        f(b);
+        cout << "---" << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_13::test();
+    Practise_13_14::test();
     
     
     return 0;
