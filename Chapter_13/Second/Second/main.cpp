@@ -451,10 +451,38 @@ namespace Practise_13_17 {
     }
 }
 
+namespace Practise_13_18 {
+    class Employee {
+        INPUT_DECLARE(Employee)
+    private:
+        static int counter;
+        int id;
+        string name;
+    public:
+        Employee(string n) : id(counter++), name(n) {}
+    };
+    INPUT_DEFINE(Employee, {
+        os << value.name << " : " << value.id;
+    })
+    int Employee::counter = 0;
+    void test() {
+        Employee e("yanghan"), b("lijie");
+        cout << e << endl;
+        cout << b << endl;
+    }
+}
+
+namespace Practise_13_19 {
+    void test() {
+        /**
+         *  不需要
+         */
+    }
+}
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_17::test();
+    Practise_13_18::test();
     
     
     return 0;
