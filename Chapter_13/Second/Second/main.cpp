@@ -386,10 +386,75 @@ namespace Practise_13_14 {
     }
 }
 
+namespace Practise_13_15 {
+    class numbered {
+        INPUT_DECLARE(numbered)
+    private:
+        int id;
+        static int counter;
+    public:
+        int mysn() const { return id; }
+        numbered() : id(counter++) {}
+    };
+    int numbered::counter = 0;
+    INPUT_DEFINE(numbered, {
+        os << "id = " << value.id;
+    })
+    void f(numbered s) { cout << s.mysn() << endl; }
+    void test() {
+        numbered a, b = a, c = b;
+        f(a); f(b); f(c);
+    }
+}
+
+namespace Practise_13_16 {
+    class numbered {
+        INPUT_DECLARE(numbered)
+    private:
+        int id;
+        static int counter;
+    public:
+        int mysn() const { return id; }
+        numbered() : id(counter++) {}
+        numbered(const numbered& n) : id(counter++) {}
+    };
+    int numbered::counter = 0;
+    INPUT_DEFINE(numbered, {
+        os << "id = " << value.id;
+    })
+    void f(numbered s) { cout << s.mysn() << endl; }
+    void test() {
+        numbered a, b = a, c = b;
+        f(a); f(b); f(c);
+    }
+}
+
+namespace Practise_13_17 {
+    class numbered {
+        INPUT_DECLARE(numbered)
+    private:
+        int id;
+        static int counter;
+    public:
+        int mysn() const { return id; }
+        numbered() : id(counter++) {}
+        numbered(const numbered& n) : id(counter++) {}
+    };
+    int numbered::counter = 0;
+    INPUT_DEFINE(numbered, {
+        os << "id = " << value.id;
+    })
+    void f(const numbered& s) { cout << s.mysn() << endl; }
+    void test() {
+        numbered a, b = a, c = b;
+        f(a); f(b); f(c);
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_14::test();
+    Practise_13_17::test();
     
     
     return 0;
