@@ -192,27 +192,27 @@ namespace Practise_13_03 {
 }
 
 namespace Practise_13_04 {
-    class Point {
-    public:
-        Point() { cout << "构造" << endl; }
-        Point(const Point& p) { cout << "拷贝构造" << endl; }
-    };
-    Point global;
-    Point foo_bar(Point arg) {
-        cout << "----" << endl;
-        Point local = arg;
-        cout << "1" << endl;
-        Point *heap = new Point(global);
-        cout << "2" << endl;
-        *heap = local;
-        cout << "3" << endl;
-        Point pa[4] = { local, *heap };
-        cout << "4" << endl;
-        return *heap;
-    }
-    void test() {
-        foo_bar(Point());
-    }
+//    class Point {
+//    public:
+//        Point() { cout << "构造" << endl; }
+//        Point(const Point& p) { cout << "拷贝构造" << endl; }
+//    };
+//    Point global;
+//    Point foo_bar(Point arg) {
+//        cout << "----" << endl;
+//        Point local = arg;
+//        cout << "1" << endl;
+//        Point *heap = new Point(global);
+//        cout << "2" << endl;
+//        *heap = local;
+//        cout << "3" << endl;
+//        Point pa[4] = { local, *heap };
+//        cout << "4" << endl;
+//        return *heap;
+//    }
+//    void test() {
+//        foo_bar(Point());
+//    }
 }
 
 namespace Practise_13_05 {
@@ -286,10 +286,93 @@ namespace Practise_13_08 {
     };
 }
 
+namespace Practise_13_09 {
+    void test() {
+        /**
+         *  析构函数是一个没有参数无法重载的函数，它用于在释放你自己分配的资源，在析构函数体执行后，类就释放那些默认释放的资源。当你没有手动定义析构函数，类会自己为你合成一个
+         */
+    }
+}
+
+namespace Practise_13_10 {
+    void test() {
+        /**
+         *  StrBlob 中的 data 是一个智能指针，StrBlob 对象销毁，因此对它的引用计数减为 0，data 调用析构函数被释放，同时释放 vector 中每个 string，也都被分别调用了析构函数
+         
+            StrBlobPtr 被释放时不会减少 StrBlob 中的引用计数，因此只是释放自己的资源
+         */
+    }
+}
+
+namespace Practise_13_11 {
+    class HasPtr {
+    public:
+        HasPtr(const string& s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        HasPtr& operator=(const HasPtr& hp) {
+            auto d = new string(*hp.ps);
+            delete ps;
+            ps = d;
+            i = hp.i;
+            return *this;
+        }
+        ~HasPtr() {
+            delete ps;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+}
+
+namespace Practise_13_12 {
+    class Sales_data {
+    private:
+        string bookNo;
+    public:
+        Sales_data() { cout << "构造" << endl; }
+        Sales_data(const Sales_data& s) : bookNo(s.bookNo) { cout << "拷贝构造" << endl; }
+        string isbn() const { return bookNo; }
+        ~Sales_data() {
+            cout << "析构函数" << endl;
+        }
+    };
+    bool fcn(const Sales_data *trans, Sales_data accum) {
+        cout << "1" << endl;
+        Sales_data item1(*trans);
+        cout << "2" << endl;
+        Sales_data item2(accum);
+        cout << "3" << endl;
+        return item1.isbn() != item2.isbn();
+    }
+    void test() {
+        Sales_data data;
+        cout << "----" << endl;
+        fcn(&data, data);
+        cout << "----" << endl;
+    }
+}
+
+namespace Practise_13_13 {
+    struct X {
+        X() { cout << "constructor" << endl; }
+        X(const X& x) { cout << "copy" << endl; }
+        ~X() { cout << "dealloc" << endl; }
+    };
+    void test() {
+        vector<X> vx;
+        cout << "----" << endl;
+        vx.push_back(X());
+        cout << "1" << endl;
+        vx.push_back(X());
+        cout << "2" << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_06::test();
+    Practise_13_13::test();
     
     
     return 0;
