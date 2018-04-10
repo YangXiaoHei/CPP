@@ -480,9 +480,93 @@ namespace Practise_13_19 {
     }
 }
 
+namespace Practise_13_20 {
+    class HasPtr {
+    public:
+        HasPtr(const string& s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        HasPtr& operator=(const HasPtr& hp) {
+            auto d = new string(*hp.ps);
+            delete ps;
+            ps = d;
+            i = hp.i;
+            return *this;
+        }
+        ~HasPtr() { delete ps; }
+    private:
+        string *ps;
+        int i;
+    };
+}
+
+namespace Practise_13_23 {
+    void test() {
+        /**
+         *  没区别
+         */
+    }
+}
+
+namespace Practise_13_24 {
+    void test() {
+        /**
+         *  如果未定义析构函数，将引发内存泄漏
+            如果没定义拷贝构造函数，那么当发生拷贝构造同时，就会发生 double free
+         */
+    }
+}
+
+namespace Practise_13_25 {
+    class StrBlob {
+        INPUT_DECLARE(StrBlob)
+    public:
+        StrBlob() : data(make_shared<vector<string>>()) {}
+        StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
+        StrBlob(const StrBlob& b) : data(make_shared<vector<string>>(*b.data)) {}
+        StrBlob& operator=(const StrBlob& b) {
+            data = make_shared<vector<string>>(*b.data);
+            return *this;
+        }
+        void push_back(const string& s) {
+            data->push_back(s);
+        }
+        void pop_back() {
+            check(0, "empty!");
+            data->pop_back();
+        }
+    private:
+        shared_ptr<vector<string>> data;
+        void check(size_t i, const string& m) {
+            if (i >= data->size()) {
+                throw out_of_range(m);
+            }
+        }
+    };
+    INPUT_DEFINE(StrBlob, {
+        for (auto it = value.data->begin(); it != value.data->end(); ++it)
+            os << *it << " ";
+    })
+    void test() {
+        StrBlob a = {"yanghan", "lijie", "haha", "hello world"}, c = a;
+        StrBlob b = a;
+        b.pop_back();
+        b.pop_back();
+        cout << a << endl;
+        cout << b << endl;
+        cout << c << endl;
+        b = c;
+        b.pop_back();
+        cout << "-----" << endl;
+        cout << a << endl;
+        cout << b << endl;
+        cout << c << endl;
+    }
+}
+
+
 int main(int argc, const char * argv[]) {
 
-    Practise_13_18::test();
+    Practise_13_25::test();
     
     
     return 0;
