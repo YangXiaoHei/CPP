@@ -563,11 +563,51 @@ namespace Practise_13_25 {
     }
 }
 
+namespace Practise_13_27 {
+    
+    class HasPtr {
+        INPUT_DECLARE(HasPtr)
+    public:
+        HasPtr(const string &s = string()) : ps(new string(s)), i(0), use_count(new int(1)) {}
+        HasPtr(const HasPtr &hp) : ps(hp.ps), i(hp.i), use_count(hp.use_count) { ++*use_count; }
+        HasPtr& operator=(const HasPtr& hp) {
+            ++*hp.use_count;
+            if (--*use_count == 0) {
+                delete ps;
+                delete use_count;
+            }
+            ps = hp.ps;
+            use_count = hp.use_count;
+            i = hp.i;
+            return *this;
+        }
+        ~HasPtr() {
+            if (--*use_count == 0) {
+                delete ps;
+                delete use_count;
+                cout << "被析构啦" << endl;
+            }
+        }
+    private:
+        string *ps;
+        int i;
+        int *use_count;
+    };
+    INPUT_DEFINE(HasPtr, {
+        os << "引用计数 : " << *value.use_count;
+    })
+    void test() {
+        HasPtr hp("yanghan");
+        cout << hp << endl;
+        HasPtr hp1 = hp, hp2 = hp;
+        cout << hp1 << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_25::test();
-    
+    Practise_13_27::test();
     
     return 0;
 }
