@@ -604,10 +604,92 @@ namespace Practise_13_27 {
     }
 }
 
+namespace Practise_13_28 {
+    class TreeNode {
+    private:
+        string value;
+        int *count;
+        TreeNode *left;
+        TreeNode *right;
+    public:
+        TreeNode() : TreeNode("", nullptr, nullptr) {}
+        TreeNode(const string& s, TreeNode *l, TreeNode *r) :
+        value(s), count(new int(1)), left(l), right(r) {}
+        TreeNode(const TreeNode& t) : value(t.value), count(t.count), left(t.left), right(t.right) { ++*count; }
+        TreeNode& operator=(const TreeNode& t) {
+            ++*t.count;
+            if (--*count == 0) {
+                delete count;
+                if (left)  delete left;
+                if (right) delete right;
+            }
+            count = t.count;
+            left = t.left;
+            right = t.right;
+            return *this;
+        }
+    };
+    
+    class BinStrTree {
+    private:
+        TreeNode *root;
+    public:
+        BinStrTree() : root(new TreeNode) {}
+        BinStrTree(const BinStrTree &b) : root(new TreeNode(*(b.root))) {}
+        BinStrTree& operator=(const BinStrTree &b) {
+            auto r = new TreeNode(*b.root);
+            delete root;
+            root = r;
+            return *this;
+        }
+        ~BinStrTree() { delete root; }
+    };
+    
+    void test() {
+        
+    }
+}
+
+namespace Practise_13_29 {
+    void test() {
+        
+        /**
+         *  因为参数类型不一样，所以有更优先采取的匹配
+         */
+        
+    }
+}
+
+namespace Practise_13_30 {
+    class HasPtr {
+        friend void swap(HasPtr &a, HasPtr &b);
+    public:
+        HasPtr() : ps(new string()), i(0) {}
+        HasPtr(const HasPtr &hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        HasPtr& operator=(HasPtr hp) {
+            swap(*this, hp);
+            return *this;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    void swap(HasPtr &a, HasPtr &b) {
+        using std::swap;
+        swap(a.ps, b.ps);
+        swap(a.i, b.i);
+        cout << "swap" << endl;
+    }
+    void test() {
+        HasPtr a, b = a, c = b;
+        a = c;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_27::test();
+    Practise_13_30::test();
     
     return 0;
 }
