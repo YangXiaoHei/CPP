@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include <set>
+#include <map>
 
 #define INPUT_DEFINE(_type_, _closure_) \
 friend ostream& operator<<(ostream& os, const _type_& value) \
@@ -730,10 +732,133 @@ namespace Practise_13_31 {
     }
 }
 
+namespace Practise_13_32 {
+    void test() {
+        
+        /**
+         *  没有动态内存分配，所以不会提高性能
+         */
+    }
+}
+
+
+namespace CopyControlSample {
+    
+    class Folder;
+    class Message;
+    
+    class Folder {
+        friend class Message;
+        friend ostream& operator<<(ostream& os, const Folder &f);
+    public:
+        Folder(const string &s = string("")) : name(s) {}
+        void addMsg(Message *m);
+        void remMsg(Message *m);
+    private:
+        string name;
+        set<Message *> msgs;
+    };
+    
+    class Message {
+        friend class Folder;
+        friend ostream& operator<<(ostream& os, const Message &f);
+    public:
+        explicit Message(const string &str = "") : contents(str) {}
+        Message(const Message &m);
+        Message& operator=(const Message& m);
+        ~Message();
+        Message& save(Folder &);
+        void remove(Folder &);
+    private:
+        string contents;
+        set<Folder *> folders;
+        void addToFolders(Message& m);
+        void removeFromFolders();
+    };
+    
+    Message::Message(const Message &m) : contents(m.contents), folders(m.folders) {
+        for (auto f : m.folders)
+            f->addMsg(this);
+    }
+    
+    Message& Message::operator=(const Message& m) {
+        
+        // 自己被覆盖，因此把 folders 中自己的位置都清除掉
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+        
+        contents = m.contents;
+        folders = m.folders;
+        
+        // 覆盖者则需要把自己加入它的文件夹中
+        for (auto f : m.folders) {
+            f->addMsg(this);
+        }
+        return *this;
+    }
+    
+    Message::~Message() {
+        for (auto f : folders)
+            f->remMsg(this);
+    }
+    
+    Message& Message::save(Folder &f) {
+        folders.insert(&f);
+        f.addMsg(this);
+        return *this;
+    }
+    
+    void Message::remove(Folder &f) {
+        folders.erase(&f);
+        f.remMsg(this);
+    }
+    
+    void Folder::addMsg(Message *m) {
+        msgs.insert(m);
+    }
+    
+    void Folder::remMsg(Message *m) {
+        msgs.erase(m);
+    }
+    
+    ostream& operator<<(ostream& os, const Message &f) {
+        os << f.contents;
+        return os;
+    }
+    
+    ostream& operator<<(ostream& os, const Folder &f) {
+        os << f.name << endl;
+        for (auto it = f.msgs.begin(); it != f.msgs.end(); ++it)
+            os << "\t" << **it << endl;
+        return os;
+    }
+    void test() {
+        Folder A("A"), B("B"), C("C");
+        Message a("C++Primer"), b("Algorithms4"), c("RegexExpression");
+        
+        a.save(A).save(B).save(C);
+        b.save(B).save(C);
+        c.save(A);
+        
+        cout << A << endl;
+        cout << B << endl;
+        cout << C << endl;
+        
+        a = b;
+        
+        cout << "-----" << endl;
+        
+        cout << A << endl;
+        cout << B << endl;
+        cout << C << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_31::test();
+    CopyControlSample::test();
     
     return 0;
 }
