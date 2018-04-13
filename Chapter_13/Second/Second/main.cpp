@@ -10,9 +10,8 @@
 #include <string.h>
 #include <vector>
 
-#define INPUT_DECLARE(_type_) friend ostream& operator<<(ostream&, const _type_&);
 #define INPUT_DEFINE(_type_, _closure_) \
-ostream& operator<<(ostream& os, const _type_& value) \
+friend ostream& operator<<(ostream& os, const _type_& value) \
 {\
 do { _closure_ } while(0); \
 return os;\
@@ -22,16 +21,16 @@ using namespace std;
 
 namespace YH {
     class MyStr {
-        INPUT_DECLARE(MyStr)
+        INPUT_DEFINE(MyStr, {
+            os << value.val;
+        })
     public:
         MyStr(const char *s) : val(s) { cout << "constrctors" << endl; }
         MyStr(const MyStr& m) : val(m.val) { cout << "copy constrctors" << endl; }
     private:
         string val;
     };
-    INPUT_DEFINE(MyStr, {
-        os << value.val;
-    })
+    
     void haha(MyStr m) {
         cout << m << endl;
     }
@@ -113,7 +112,11 @@ namespace Practise_13_03 {
     class StrBlobPtr;
     class StrBlob {
         friend class StrBlobPtr;
-        INPUT_DECLARE(StrBlob)
+        INPUT_DEFINE(StrBlob, {
+            for (auto it = value.data->begin(); it != value.data->end(); ++it) {
+                os << *it << endl;
+            }
+        })
     public:
         typedef vector<string>::size_type size_type;
         StrBlob() : data(make_shared<vector<string>>()) {}
@@ -145,11 +148,7 @@ namespace Practise_13_03 {
             }
         }
     };
-    INPUT_DEFINE(StrBlob, {
-        for (auto it = value.data->begin(); it != value.data->end(); ++it) {
-            os << *it << endl;
-        }
-    })
+   
     class StrBlobPtr {
     public:
         StrBlobPtr(StrBlob &b) : wptr(b.data), cur(0) {}
@@ -217,7 +216,9 @@ namespace Practise_13_04 {
 
 namespace Practise_13_05 {
     class HasPtr {
-        INPUT_DECLARE(HasPtr)
+        INPUT_DEFINE(HasPtr, {
+            os << "address : " << value.ps << " content : " << *value.ps;
+        })
     public:
         HasPtr(const string& s = string()) : ps(new string(s)), i(0) {}
         HasPtr(const HasPtr& p) : ps(new string(*p.ps)), i(p.i) {}
@@ -235,9 +236,7 @@ namespace Practise_13_05 {
         string *ps;
         int i;
     };
-    INPUT_DEFINE(HasPtr, {
-        os << "address : " << value.ps << " content : " << *value.ps;
-    })
+    
     void test() {
         HasPtr a("xixi"), b("heihei");
         cout << a << endl;
@@ -388,7 +387,9 @@ namespace Practise_13_14 {
 
 namespace Practise_13_15 {
     class numbered {
-        INPUT_DECLARE(numbered)
+        INPUT_DEFINE(numbered, {
+            os << "id = " << value.id;
+        })
     private:
         int id;
         static int counter;
@@ -397,9 +398,7 @@ namespace Practise_13_15 {
         numbered() : id(counter++) {}
     };
     int numbered::counter = 0;
-    INPUT_DEFINE(numbered, {
-        os << "id = " << value.id;
-    })
+    
     void f(numbered s) { cout << s.mysn() << endl; }
     void test() {
         numbered a, b = a, c = b;
@@ -409,7 +408,9 @@ namespace Practise_13_15 {
 
 namespace Practise_13_16 {
     class numbered {
-        INPUT_DECLARE(numbered)
+        INPUT_DEFINE(numbered, {
+            os << "id = " << value.id;
+        })
     private:
         int id;
         static int counter;
@@ -419,9 +420,7 @@ namespace Practise_13_16 {
         numbered(const numbered& n) : id(counter++) {}
     };
     int numbered::counter = 0;
-    INPUT_DEFINE(numbered, {
-        os << "id = " << value.id;
-    })
+    
     void f(numbered s) { cout << s.mysn() << endl; }
     void test() {
         numbered a, b = a, c = b;
@@ -431,7 +430,9 @@ namespace Practise_13_16 {
 
 namespace Practise_13_17 {
     class numbered {
-        INPUT_DECLARE(numbered)
+        INPUT_DEFINE(numbered, {
+            os << "id = " << value.id;
+        })
     private:
         int id;
         static int counter;
@@ -441,9 +442,7 @@ namespace Practise_13_17 {
         numbered(const numbered& n) : id(counter++) {}
     };
     int numbered::counter = 0;
-    INPUT_DEFINE(numbered, {
-        os << "id = " << value.id;
-    })
+    
     void f(const numbered& s) { cout << s.mysn() << endl; }
     void test() {
         numbered a, b = a, c = b;
@@ -453,7 +452,9 @@ namespace Practise_13_17 {
 
 namespace Practise_13_18 {
     class Employee {
-        INPUT_DECLARE(Employee)
+        INPUT_DEFINE(Employee, {
+            os << value.name << " : " << value.id;
+        })
     private:
         static int counter;
         int id;
@@ -461,9 +462,7 @@ namespace Practise_13_18 {
     public:
         Employee(string n) : id(counter++), name(n) {}
     };
-    INPUT_DEFINE(Employee, {
-        os << value.name << " : " << value.id;
-    })
+   
     int Employee::counter = 0;
     void test() {
         Employee e("yanghan"), b("lijie");
@@ -518,7 +517,10 @@ namespace Practise_13_24 {
 
 namespace Practise_13_25 {
     class StrBlob {
-        INPUT_DECLARE(StrBlob)
+        INPUT_DEFINE(StrBlob, {
+            for (auto it = value.data->begin(); it != value.data->end(); ++it)
+                os << *it << " ";
+        })
     public:
         StrBlob() : data(make_shared<vector<string>>()) {}
         StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
@@ -542,10 +544,7 @@ namespace Practise_13_25 {
             }
         }
     };
-    INPUT_DEFINE(StrBlob, {
-        for (auto it = value.data->begin(); it != value.data->end(); ++it)
-            os << *it << " ";
-    })
+    
     void test() {
         StrBlob a = {"yanghan", "lijie", "haha", "hello world"}, c = a;
         StrBlob b = a;
@@ -566,7 +565,9 @@ namespace Practise_13_25 {
 namespace Practise_13_27 {
     
     class HasPtr {
-        INPUT_DECLARE(HasPtr)
+        INPUT_DEFINE(HasPtr, {
+            os << "引用计数 : " << *value.use_count;
+        })
     public:
         HasPtr(const string &s = string()) : ps(new string(s)), i(0), use_count(new int(1)) {}
         HasPtr(const HasPtr &hp) : ps(hp.ps), i(hp.i), use_count(hp.use_count) { ++*use_count; }
@@ -593,9 +594,7 @@ namespace Practise_13_27 {
         int i;
         int *use_count;
     };
-    INPUT_DEFINE(HasPtr, {
-        os << "引用计数 : " << *value.use_count;
-    })
+    
     void test() {
         HasPtr hp("yanghan");
         cout << hp << endl;
@@ -670,6 +669,7 @@ namespace Practise_13_30 {
             swap(*this, hp);
             return *this;
         }
+        ~HasPtr() { delete ps; }
     private:
         string *ps;
         int i;
@@ -686,10 +686,54 @@ namespace Practise_13_30 {
     }
 }
 
+namespace Practise_13_31 {
+    class HasPtr {
+        INPUT_DEFINE(HasPtr, {
+            os << *value.ps;
+        })
+        friend bool operator<(const HasPtr &a, const HasPtr &b) {
+            return *a.ps < *b.ps;
+        }
+        friend void swap(HasPtr &a, HasPtr &b) {
+            a.swap(b);
+        }
+    private:
+        string *ps;
+        int i;
+    public:
+        HasPtr() : ps(new string()), i(0) {}
+        HasPtr(const char *s) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        ~HasPtr() { delete ps; }
+        HasPtr& operator=(HasPtr h) {
+            this->swap(*this);
+            return *this;
+        }
+        
+        void swap(HasPtr &a) {
+            using std::swap;
+            swap(ps, a.ps);
+            swap(i, a.i);
+            cout << "swap" << endl;
+        }
+    };
+    void test() {
+        
+        vector<HasPtr> v;
+        
+        char buf[100];
+        for (int i = 0; i < 10; i++) {
+            snprintf(buf, sizeof(buf), "%d", i);
+            v.push_back(HasPtr(buf));
+        }
+        sort(v.begin(), v.end());
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_30::test();
+    Practise_13_31::test();
     
     return 0;
 }
