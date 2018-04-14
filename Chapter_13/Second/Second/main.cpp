@@ -855,6 +855,24 @@ namespace CopyControlSample {
     }
 }
 
+namespace Practise_13_33 {
+    void test() {
+        
+        /**
+         *  为什么不用 Folder 而用引用呢，是因为参数传递时不需要拷贝，浪费性能
+            为什么不用 const，如果用了 const，那么内部只能调用 const 函数，内部的内部只能调用 const
+            然后向 set 插入一个元素一定不是 const 函数，所以不能这么搞，而且语意也不对，const
+            代表向调用者声明我不会改类内部的东西
+         */
+    }
+}
+
+namespace Practise_13_34 {
+    void test() {
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
