@@ -1195,10 +1195,62 @@ namespace Practise_13_44 {
     }
 }
 
+namespace YH2 {
+    /**
+     *  左值持久，右值短暂
+     */
+    void test() {
+        
+        /**
+         *  右值应用只能绑定到一个将要被销毁的对象上
+         
+            由于右值只能绑定到临时对象，因此 ：
+            1，所引用对象将要被销毁
+            2，该对象没有其他用户
+         
+            通过 move 可以获得绑定到左值上的右值引用
+         int &rr1 = 42;
+         int &&rr2 = rr1 ❌ 表达式 rr1 是左值
+         int &&rr3 = std::move(rr1);
+         */
+        int i = 42;
+        int &r = i;
+//        int &&rr = i;  // i 是左值
+//        int &r2 = i * 42; // i * 42 是右值
+        const int &r3 = i * 42;
+        int &&rr2 = i * 42;
+    }
+}
+
+namespace Practise_13_45 {
+    void test() {
+        
+        /**
+         *  右值引用只能绑定到一个即将销毁的对象上，这意味着该对象没有其他用户，并且该引用对象将要销毁
+            左值引用只能绑定到一个左值上，左值只有在离开作用域时才被销毁
+         */
+    }
+}
+
+namespace Practise_13_46 {
+    int f() { return 0; }
+    void test() {
+        vector<int> vi(100);
+        
+        int &&r1 = f();
+        int &r2 = vi[0];
+        int &r3 = r1;
+        int &&r4 = vi[0] * f();
+        
+    }
+}
+
+
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_44::test();
+    YH2::test();
     
     return 0;
 }
