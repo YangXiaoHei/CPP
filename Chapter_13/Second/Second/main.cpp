@@ -1383,10 +1383,146 @@ namespace YH7 {
     }
 }
 
+namespace YH8 {
+    class Folder;
+    class Message {
+        friend ostream& operator<<(ostream& os, const Message &m);
+    public:
+        Message(const string &s = string()) : content(s) {}
+        Message(const Message& m);
+        Message(Message &&m);
+        Message& operator=(Message &&m);
+        Message& operator=(const Message& m);
+        Message& save(Folder *f);
+        Message& remove(Folder *f);
+        ~Message();
+    private:
+        string content;
+        set<Folder *> folders;
+    };
+    class Folder {
+        friend ostream& operator<<(ostream& os, const Folder &m);
+    public:
+        Folder(const string &s = string()) : title(s) {}
+        ~Folder();
+        void addMsg(Message *m);
+        void remMsg(Message *m);
+    private:
+        string title;
+        set<Message *> msgs;
+    };
+    
+    ostream& operator<<(ostream& os, const Message &f) {
+        os << f.content;
+        return os;
+    }
+    
+    ostream& operator<<(ostream& os, const Folder &f) {
+        os << f.title << endl;
+        for (auto it = f.msgs.begin(); it != f.msgs.end(); ++it)
+            os << "\t" << **it << endl;
+        return os;
+    }
+    
+    Message& Message::save(Folder *f) {
+        folders.insert(f);
+        f->addMsg(this);
+        return *this;
+    }
+    
+    Message& Message::remove(Folder *f) {
+        folders.erase(f);
+        f->remMsg(this);
+        return *this;
+    }
+    
+    Message::Message(const Message &m) : content(m.content), folders(m.folders) {
+        for (auto f : m.folders) {
+            f->addMsg(this);
+        }
+    }
+    
+    Message::Message(Message &&m) {
+        folders = std::move(m.folders);
+        for (auto f : folders) {
+            f->addMsg(this);
+            f->remMsg(&m);
+        }
+        m.folders.clear();
+    }
+    
+    Message& Message::operator=(YH8::Message &&m) {
+        if (this != &m) {
+            for (auto f : folders) {
+                f->remMsg(this);
+            }
+            content = std::move(m.content);
+            folders = std::move(m.folders);
+            for (auto f : folders) {
+                f->addMsg(this);
+                f->remMsg(&m);
+            }
+            m.folders.clear();
+        }
+        return *this;
+    }
+    
+    Message& Message::operator=(const YH8::Message &m) {
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+        content = m.content;
+        folders = m.folders;
+        for (auto f : folders) {
+            f->addMsg(this);
+        }
+        return *this;
+    }
+    
+    Message::~Message() {
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+    }
+    
+    void Folder::addMsg(YH8::Message *m) {
+        msgs.insert(m);
+    }
+    
+    void Folder::remMsg(YH8::Message *m) {
+        msgs.erase(m);
+    }
+    Folder::~Folder() {
+        for (auto m : msgs) {
+            m->remove(this);
+        }
+    }
+    void test() {
+        Folder A("A"), B("B"), C("C");
+        Message a("C++Primer"), b("Algorithms4"), c("RegexExpression");
+        
+        a.save(&A).save(&B).save(&C);
+        b.save(&B).save(&C);
+        c.save(&A);
+        
+        cout << A << endl;
+        cout << B << endl;
+        cout << C << endl;
+        
+        a = b;
+        
+        cout << "-----" << endl;
+        
+        cout << A << endl;
+        cout << B << endl;
+        cout << C << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    YH7::test();
+    YH8::test();
     
     return 0;
 }
