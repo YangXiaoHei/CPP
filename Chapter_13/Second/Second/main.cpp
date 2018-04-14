@@ -868,8 +868,82 @@ namespace Practise_13_33 {
 }
 
 namespace Practise_13_34 {
+    class Folder;
+    class Message {
+    public:
+        Message(const string &s = string()) : content(s) {}
+        Message(const Message& m);
+        Message& operator=(const Message& m);
+        Message& save(Folder *f);
+        Message& remove(Folder *f);
+    private:
+        set<Folder *> folders;
+        string content;
+    };
+    class Folder {
+    public:
+        Folder(const string &s = string()) : title(s) {}
+        void addMsg(Message *m);
+        void remMsg(Message *m);
+    private:
+        string title;
+        set<Message *> msgs;
+    };
+    
+    Message& Message::save(Practise_13_34::Folder *f) {
+        folders.insert(f);
+        f->addMsg(this);
+        return *this;
+    }
+    
+    Message& Message::remove(Practise_13_34::Folder *f) {
+        folders.erase(f);
+        f->remMsg(this);
+        return *this;
+    }
+    
+    // Message a = b 相当于把新创建的 a 加入到 b 所在的每一个 folder 中
+    // 首先把 b 的 folders 拷贝一份过来，然后往里面的每个 folder 添加自己
+    Message::Message(const Message& m) : content(m.content), folders(m.folders) {
+        for (auto f : m.folders) {
+            f->addMsg(this);
+        }
+    }
+    
+    // a = b  a 里面已经有一份 folder 了，但此时 a 要被 b 覆盖，所以应该把关联 a 的 folder 遍历一遍
+    // 然后删除 a，接下来把 b 的 folder 给 a，然后遍历每一个，往其中添加 a
+    Message& Message::operator=(const Message& m) {
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+        folders = m.folders;
+        content = m.content;
+        for (auto f : folders) {
+            f->addMsg(this);
+        }
+        return *this;
+    }
+    
+    void Folder::addMsg(Practise_13_34::Message *m) {
+        msgs.insert(m);
+    }
+    
+    void Folder::remMsg(Practise_13_34::Message *m) {
+        msgs.erase(m);
+    }
     void test() {
         
+    }
+}
+
+namespace Practise_13_35 {
+    void test() {
+        /**
+         *  如果 Message 使用合成的拷贝构造，那么
+            当拷贝构造发生时，新创建的对象持有的 set 中居然没有保存自己的指针
+         
+            如果使用合成的拷贝赋值运算符，那么当此调用发生时，被覆盖的对象已经从逻辑上不存在，但是缺仍然被某个 Folder 持有指针，并且用于赋值的右侧对象的 set 还应该持有被覆盖对象的新指针
+         */
     }
 }
 
