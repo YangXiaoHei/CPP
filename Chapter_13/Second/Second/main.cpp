@@ -1079,6 +1079,11 @@ namespace Practise_13_39 {
             alloc_n_move(newc);
         }
     public:
+        StrVec(initializer_list<string> il) {
+            for (auto it = il.begin(); it != il.end(); ++it) {
+                push_back(*it);
+            }
+        }
         size_t size() const { return first_free - elements; }
         size_t capacity() const { return cap - elements; }
         string *begin() const { return elements; }
@@ -1145,10 +1150,55 @@ namespace Practise_13_39 {
     }
 }
 
+namespace Practise_13_41 {
+    void test() {
+        /**
+         *  因为一开始 elements 和 first_free 指向同一位置，要先确保当前位置被构造，再转去下一位置
+         */
+    }
+}
+
+namespace Practise_13_44 {
+    class String {
+        INPUT_DEFINE(String, {
+            for (char *i = value.begin; i != value.end; ++i)
+                os << *i;
+        })
+    public:
+        String() : String("") {}
+        String(const char *s) {
+            char *c = const_cast<char *>(s);
+            while (*c) c++;
+            range_initializer(s, c);
+        }
+        ~String() {
+            alloc.deallocate(begin, end - begin);
+        }
+    private:
+        static allocator<char> alloc;
+        char *begin;
+        char *end;
+        pair<char *, char *> alloc_n_copy(const char *b, const char *e) {
+            auto d = alloc.allocate(e - b);
+            return { d, uninitialized_copy(b, e, d)};
+        }
+        void range_initializer(const char *b, const char *e) {
+            auto d = alloc_n_copy(b, e);
+            begin = d.first;
+            end = d.second;
+        }
+    };
+    allocator<char> String::alloc;
+    void test() {
+        String s("yanghan");
+        cout << s << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    CopyControlSample::test();
+    Practise_13_44::test();
     
     return 0;
 }
