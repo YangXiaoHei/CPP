@@ -1171,6 +1171,18 @@ namespace Practise_13_44 {
             while (*c) c++;
             range_initializer(s, c);
         }
+        String(const String& s) {
+            range_initializer(s.begin, s.end);
+            cout << "拷贝构造" << endl;
+        }
+        String& operator=(const String &s) {
+            auto d = alloc_n_copy(s.begin, s.end);
+            alloc.deallocate(begin, end - begin);
+            begin = d.first;
+            end = d.second;
+            cout << "拷贝赋值符" << endl;
+            return *this;
+        }
         ~String() {
             alloc.deallocate(begin, end - begin);
         }
@@ -1236,12 +1248,30 @@ namespace Practise_13_46 {
     int f() { return 0; }
     void test() {
         vector<int> vi(100);
-        
         int &&r1 = f();
         int &r2 = vi[0];
         int &r3 = r1;
         int &&r4 = vi[0] * f();
-        
+    }
+}
+
+namespace Practise_13_47 {
+    void test() {
+        using Practise_13_44::String;
+        String a(""), b = a, c = b;
+        a = c;
+    }
+}
+
+namespace Practise_13_48 {
+    void test() {
+        using Practise_13_44::String;
+        vector<String> v;
+        char buf[10] = { 0 };
+        for (int i = 0; i < 2; i++) {
+            snprintf(buf, sizeof(buf), "%d", i);
+            v.push_back(String(buf));
+        }
     }
 }
 
@@ -1250,7 +1280,7 @@ namespace Practise_13_46 {
 
 int main(int argc, const char * argv[]) {
 
-    YH2::test();
+    Practise_13_48::test();
     
     return 0;
 }
