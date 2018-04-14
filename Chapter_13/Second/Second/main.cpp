@@ -1221,10 +1221,11 @@ namespace YH2 {
             2，该对象没有其他用户
          
             通过 move 可以获得绑定到左值上的右值引用
-         int &rr1 = 42;
-         int &&rr2 = rr1 ❌ 表达式 rr1 是左值
-         int &&rr3 = std::move(rr1);
          */
+//         int &rr1 = 42;
+//         int &&rr2 = rr1 ❌ 表达式 rr1 是左值
+//         int &&rr3 = std::move(rr1);
+        
         int i = 42;
         int &r = i;
 //        int &&rr = i;  // i 是左值
@@ -1275,12 +1276,113 @@ namespace Practise_13_48 {
     }
 }
 
+namespace YH3 {
+    /**
+     *  如果没定义拷贝构造和拷贝赋值运算符，那么编译器自动合成
+        但是如果自定义了拷贝构造，或者拷贝赋值，或者析构，那么编译器不会自动合成移动构造和移动赋值运算符
+        如果一个类没有移动构造，那么就会被调用拷贝构造
+     
+      只有当一个类没有定义任何自己版本的拷贝控制成员，且类的每个非 static 数据成员都可以移动，编译器才会
+        为它合成移动构造函数或移动赋值运算符，编译器可以移动内置类型成员，如果一个成员是类类型，且该类有对应的移动操作，编译器也能移动这个成员
+     */
+    struct X {
+        int i;      // 内置类型可以移动
+        string s;   // string 定义了自己的移动操作
+    };
+    struct hasX {
+        X mem;  // X 有合成的移动操作
+    };
+    void test() {
+        X x, x2 = std::move(x);         // 使用合成的移动构造函数
+        hasX hx, hx2 = std::move(hx);   // 使用合成的移动构造函数
+    }
+    
+    void test1() {
+        
+        string s("hello");
+        cout << s << endl;
+        string a = std::move(s);
+        cout << s.length() << endl;  // 震惊！s 居然空了！然空了！空了！了！！
+    }
+}
+
+namespace YH4 {
+    class StrVec {
+        
+    };
+    StrVec getVec(istream &in) {
+        return StrVec();
+    }
+    void test() {
+        StrVec v1, v2;
+        v1 = v2;               // 拷贝赋值
+        v2 = getVec(cin);      // getVec(cin) 返回右值，虽然拷贝构造和移动都可以，但移动匹配更精确
+    }
+}
+
+namespace YH5 {
+    class Foo {
+    public:
+        Foo() = default;
+        Foo(const Foo&) { cout << "拷贝构造" << endl; } // 拷贝构造
+        // 未定义移动构造
+    };
+    void test() {
+        Foo x;
+        Foo y(x);            // 拷贝构造，x 是一个左值
+        Foo z(std::move(x)); // 拷贝构造，因为未定义移动构造
+    }
+}
+
+namespace YH6 {
+    class Y {
+        Y() {}
+        Y(const Y& y) {}
+    };
+    class hasY {
+        hasY() = default;
+        hasY(hasY&&) = default;
+        Y mem; // hasY 将有一个删除的移动构造函数
+    };
+    void test() {
+//        hasY hy, hy2 = std::move(hy); // ❌ 移动构造函数是删除的
+    }
+}
+
+namespace YH7 {
+    class HasPtr {
+        friend void swap(HasPtr &a, HasPtr &b) {
+            swap(a.ps, b.ps);
+            swap(a.i, b.i);
+        }
+    public:
+        HasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr& hp) : ps(new string(*hp.ps)), i(hp.i) { cout << "拷贝构造" << endl; }
+        HasPtr(HasPtr &&hp) : ps(hp.ps), i(hp.i) { hp.ps = nullptr; hp.i = 0; cout << "移动构造" << endl; }
+        /**
+         *  赋值运算符，同时实现了拷贝构造和移动构造的能力
+         */
+        HasPtr& operator=(HasPtr hp) {
+            swap(*this, hp);
+            return *this;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    void test() {
+        HasPtr a("yanghan"), b("lijie"), c("xixi"), d("lili");
+        a = std::move(b);
+        c = d;
+    }
+}
+
 
 
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_48::test();
+    YH5::test();
     
     return 0;
 }
