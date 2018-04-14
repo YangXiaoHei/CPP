@@ -947,6 +947,41 @@ namespace Practise_13_35 {
     }
 }
 
+namespace Practise_13_36 {
+    void test() {
+        /**
+         *  如上
+         */
+    }
+}
+
+namespace Practise_13_37 {
+    void test() {
+        /**
+         *  这么傻逼的题是想测试我会不会打字吗？
+         */
+    }
+}
+
+namespace Practise_13_38 {
+    void test() {
+        /**
+         *  拷贝并交换有两个步骤，第一步执行参数的拷贝构造函数，第二步交换两者的引用
+            就像这样 ->   Message tmp = a；swap(*this, tmp)； delete tmp
+         
+            1，当执行拷贝构造函数时，我们加入到 a 的 folders 中 Message 指针，但这个指针
+            接下来就会被析构，指向内存会被释放，因为它只是个函数内的局部变量
+         
+            2，当执行交换时，被赋值对象持有了 tmp 的 set，但是并没有遍历该 set 中的每个 folders
+            并向其中添加自己的指针
+         
+            所以未使用拷贝并交换的方式，主要因为以上两点。当然了，你非要用，也可以改 swap 的内部实现，但
+            那还叫 swap 吗...
+         
+         */
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
