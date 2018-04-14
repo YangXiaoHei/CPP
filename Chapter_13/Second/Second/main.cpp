@@ -982,6 +982,169 @@ namespace Practise_13_38 {
     }
 }
 
+namespace YH1 {
+    class StrVec {
+    public:
+        StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) {}
+        StrVec(const StrVec&);
+        StrVec& operator=(const StrVec&);
+        ~StrVec();
+        void push_back(const string&);
+        size_t size() const { return first_free - elements; }
+        size_t capacity()const { return cap - elements; }
+        string * begin() const { return elements; }
+        string * end() const { return first_free; }
+    private:
+        static allocator<string> alloc;
+        void chk_n_alloc() {
+            if (size() == capacity()) {
+                reallocate();
+            }
+        }
+        pair<string *, string *> alloc_n_copy(const string *, const string *);
+        void free();
+        void reallocate();
+        string *elements;
+        string *first_free;
+        string *cap;
+    };
+    allocator<string> StrVec::alloc;
+    
+    void StrVec::push_back(const std::string &s) {
+        chk_n_alloc();
+        alloc.construct(first_free++, s);
+    }
+    
+    pair<string *, string *>
+    StrVec::alloc_n_copy(const std::string *b, const std::string *e) {
+        auto data = alloc.allocate(e - b);
+        return { data, uninitialized_copy(b, e, data)};
+    }
+    
+    void StrVec::free() {
+        if (elements) {
+            auto p = first_free;
+            while (p != elements) {
+                alloc.destroy(--p);
+            }
+            alloc.deallocate(elements, cap - elements);
+        }
+    }
+    StrVec::StrVec(const StrVec &v) {
+        auto newdata = alloc_n_copy(v.begin(), v.end());
+        elements = newdata.first;
+        first_free = newdata.second;
+    }
+    StrVec::~StrVec() {
+        free();
+    }
+    StrVec& StrVec::operator=(const YH1::StrVec &s) {
+        auto data = alloc_n_copy(s.begin(), s.end());
+        free();
+        elements = data.first;
+        first_free = cap = data.second;
+        return *this;
+    }
+    void StrVec::reallocate() {
+        auto newcap = size() ? size() * 2 : 1;
+        auto newdata = alloc.allocate(newcap);
+        auto dest = newdata;
+        auto elem = elements;
+        for (size_t i = 0; i != size(); ++i) {
+            // 后置 > 前置 > *解引用
+            alloc.construct(dest++, std::move(*elem++));
+        }
+        free();
+        elements = newdata;
+        first_free = dest;
+        cap = elements + newcap;
+    }
+}
+
+namespace Practise_13_39 {
+    class StrVec {
+    private:
+         static allocator<string> alloc;
+        string *elements;
+        string *first_free;
+        string *cap;
+        pair<string *, string *>
+        alloc_n_copy(const string *b, const string *e) {
+            auto data = alloc.allocate(e - b);
+            return {data, uninitialized_copy(b, e, data)};
+        }
+        void chk_n_alloc() { if (size() == capacity()) reallocate(); }
+        void reallocate() {
+            size_t newc = size() ? size() * 2 : 1;
+            alloc_n_move(newc);
+        }
+    public:
+        size_t size() const { return first_free - elements; }
+        size_t capacity() const { return cap - elements; }
+        string *begin() const { return elements; }
+        string *end() const { return first_free; }
+        StrVec(const StrVec& s) {
+            auto data = alloc_n_copy(s.begin(), s.end());
+            elements = data.first;
+            first_free = data.second;
+        }
+        StrVec& operator=(const StrVec& s) {
+            auto data = alloc_n_copy(s.begin(), s.end());
+            free();
+            elements = data.first;
+            first_free = data.second;
+            return *this;
+        }
+        ~StrVec() { free(); }
+        void free() {
+            if (elements) {
+                auto p = first_free;
+                while (p != elements) {
+                    alloc.destroy(--p);
+                }
+                alloc.deallocate(elements, cap - elements);
+            }
+        }
+        void push_back(const string &s) {
+            chk_n_alloc();
+            alloc.construct(first_free++, s);
+        }
+        void alloc_n_move(size_t n) {
+            auto data = alloc.allocate(n);
+            auto dest = data;
+            auto src = elements;
+            for (size_t i = 0; i < size(); ++i) {
+                alloc.construct(dest++, std::move(*src++));
+            }
+            free();
+            elements = data;
+            first_free = dest;
+            cap = elements + n;
+        }
+        void resever(size_t n) {
+            if (n <= capacity())  return;
+            alloc_n_move(n);
+        }
+        void resize(size_t n) {
+            resize(n, string());
+        }
+        void resize(size_t n, const string &s) {
+            if (n == size()) return;
+            if (n < size()) {
+                while (--n) alloc.destroy(--first_free);
+            } else {
+                if (n > capacity()) resever(capacity() * 2);
+                size_t new_constr = n - size();
+                while (--new_constr) alloc.construct(first_free++, s);
+            }
+        }
+    };
+    allocator<string> StrVec::alloc;
+    void test() {
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
