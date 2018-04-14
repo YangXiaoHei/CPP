@@ -1358,13 +1358,17 @@ namespace YH7 {
     public:
         HasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
         HasPtr(const HasPtr& hp) : ps(new string(*hp.ps)), i(hp.i) { cout << "拷贝构造" << endl; }
-        HasPtr(HasPtr &&hp) : ps(hp.ps), i(hp.i) { hp.ps = nullptr; hp.i = 0; cout << "移动构造" << endl; }
+        HasPtr(HasPtr &&hp) noexcept : ps(hp.ps), i(hp.i) { hp.ps = nullptr; hp.i = 0; cout << "移动构造" << endl; }
         /**
          *  赋值运算符，同时实现了拷贝构造和移动构造的能力
          */
         HasPtr& operator=(HasPtr hp) {
             swap(*this, hp);
             return *this;
+        }
+        ~HasPtr() {
+            cout << "析构" << endl;
+            delete ps;
         }
     private:
         string *ps;
@@ -1373,16 +1377,16 @@ namespace YH7 {
     void test() {
         HasPtr a("yanghan"), b("lijie"), c("xixi"), d("lili");
         a = std::move(b);
+        cout << "1" << endl;
         c = d;
+        cout << "2" << endl;
     }
 }
 
 
-
-
 int main(int argc, const char * argv[]) {
 
-    YH5::test();
+    YH7::test();
     
     return 0;
 }
