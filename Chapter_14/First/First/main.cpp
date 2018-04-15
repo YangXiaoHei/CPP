@@ -96,6 +96,58 @@ namespace Practise_14_02 {
     }
 }
 
+namespace Practise_14_04 {
+    void test() {
+        
+        /**
+         *  %  对称性，不应该是类成员
+            %=  类成员
+            ++ 类成员
+            ->   -> () [] 只能是类成员
+            <<  不应该是类成员
+            &&  不应该是类成员
+            ==  对称性，不应该是类成员
+            ()  -> () [] 只能是类成员
+         */
+    }
+}
+
+namespace Practise_14_05 {
+    class Book {
+        
+        friend bool operator==(const Book &a, const Book &b);
+        friend bool operator!=(const Book &a, const Book &b);
+        friend ostream& operator<<(ostream &os, const Book &b);
+        friend istream& operator>>(istream &is, Book &b);
+        
+    public:
+        Book() = default;
+        Book(const string &n, const string &a) : name(n), author(a) {}
+        
+    private:
+        string name;
+        string author;
+    };
+    
+    bool operator==(const Book &a, const Book &b) {
+        return a.name == b.name && a.author == b.author;
+    }
+    bool operator!=(const Book &a, const Book &b) {
+        return !(a == b);
+    }
+    ostream& operator<<(ostream &os, const Book &b) {
+        os << b.author << " : " << b.name;
+        return os;
+    }
+    istream& operator>>(istream &is, Book &b) {
+        is >> b.author >> b.name;
+        return is;
+    }
+    void test() {
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
