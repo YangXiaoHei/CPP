@@ -11,6 +11,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <time.h>
 
 #define INPUT_DEFINE(_type_, _closure_) \
 friend ostream& operator<<(ostream& os, const _type_& value) \
@@ -1641,6 +1642,7 @@ namespace Practise_13_49 {
             return *this;
         }
         String (String &&s) noexcept : begin(s.begin), end(s.end) {
+            cout << "移动" << endl;
             s.begin = s.end = nullptr;
         }
         String& operator=(String &&s) noexcept {
@@ -1830,10 +1832,126 @@ namespace Practise_13_49 {
     }
 }
 
+namespace Practise_13_50 {
+    using Practise_13_49::String;
+    void test() {
+        vector<String> v;
+        char buf[3] = { 0 };
+        for (int i = 0; i < 2; i++) {
+            sprintf(buf, "%d", i);
+            v.push_back(buf);
+        }
+    }
+}
+
+namespace Practise_13_51 {
+    void test() {
+        /**
+         *  这里显然是用到了移动构造，将一个将要销毁的对象绑定到右值，然后使用移动构造初始化了调用返回点的变量
+         */
+    }
+}
+
+namespace Practise_13_52 {
+    void test() {
+        /**
+         *  如果赋值运算符右侧是一个右值，那么形参的初始化将调用移动构造，否则将调用拷贝构造
+            hp = hp2 时，调用拷贝构造函数初始化拷贝赋值运算符的形参
+            hp = std::move(hp2) 时，调用移动构造函数初始化拷贝赋值运算符的形参
+         */
+    }
+}
+
+namespace Practise_13_53 {
+    class HasPtr {
+    public:
+        HasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
+        HasPtr(const HasPtr &hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        HasPtr& operator=(const HasPtr &hp) {
+            string *p = new string(*hp.ps);
+            delete ps;
+            i = hp.i;
+            ps = p;
+            return *this;
+        }
+        HasPtr(HasPtr &&hp) : ps(hp.ps), i(hp.i) { hp.ps = nullptr; }
+        HasPtr& operator=(HasPtr &&hp) {
+            if (this != &hp) {
+                delete ps;
+                ps = hp.ps;
+                i = hp.i;
+                hp.ps = nullptr;
+            }
+            return *this;
+        }
+        ~HasPtr() {
+            delete ps;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    
+    
+    class HHasPtr {
+        friend void swap(HHasPtr &a, HHasPtr &b) {
+            using std::swap;
+            swap(a.ps, b.ps);
+            swap(a.i, b.i);
+        }
+    public:
+        HHasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
+        HHasPtr(const HHasPtr &hp) : ps(new string(*hp.ps)), i(hp.i) {}
+        HHasPtr(HHasPtr &&hp) : ps(hp.ps), i(hp.i) { hp.ps = nullptr; }
+        HHasPtr& operator=(HHasPtr hp) {
+            swap(*this, hp);
+            return *this;
+        }
+        ~HHasPtr() {
+            delete ps;
+        }
+    private:
+        string *ps;
+        int i;
+    };
+    
+    void test() {
+        
+        HasPtr a, b;
+        HHasPtr c, d;
+        
+        /**
+         *  普通移动赋值 : 0.003296
+            交换并拷贝的移动 : 0.004153
+         */
+        
+        clock_t s = clock();
+        
+        for (int i = 0; i < 40000; i++) {
+            a = b;
+        }
+        
+        clock_t e = clock();
+        
+        cout << "普通移动赋值 : " << (e - s) * 1.0 / CLOCKS_PER_SEC << endl;
+        
+        s = clock();
+        
+        for (int i = 0; i < 40000; i++) {
+            c = d;
+        }
+        
+        e = clock();
+        
+        cout << "交换并拷贝的移动 : " << (e - s) * 1.0 / CLOCKS_PER_SEC << endl;
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    YH8::test();
+    Practise_13_53::test();
     
     return 0;
 }
