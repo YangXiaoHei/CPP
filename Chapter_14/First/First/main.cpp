@@ -34,8 +34,12 @@ namespace Practise_14_02 {
             os << s.bookNo << " : " << s.units_sold << " " << s.revenue;
             return os;
         }
+        /**
+         *  输入运算符必须处理可能失败的情况，而输出运算符不需要
+         */
         friend istream& operator>>(istream& is, Sales_data& s) {
             is >> s.bookNo >> s.units_sold >> s.revenue;
+            if (!is) s = Sales_data();
             return is;
         }
         friend Sales_data operator+(const Sales_data &a, const Sales_data &b) {
@@ -141,6 +145,7 @@ namespace Practise_14_05 {
     }
     istream& operator>>(istream &is, Book &b) {
         is >> b.author >> b.name;
+        if (!is)  b = Book();
         return is;
     }
     void test() {
@@ -148,10 +153,115 @@ namespace Practise_14_05 {
     }
 }
 
+namespace Practise_14_06 {
+    void test() {
+        /**
+         *  见 Practise_14_02
+         */
+    }
+}
+
+namespace Practise_14_07 {
+    void test() {
+        /**
+         *  太简单
+         */
+    }
+}
+
+namespace Practise_14_08 {
+    void test() {
+        /**
+         *  见 Practise_14_05
+         */
+    }
+}
+
+
+namespace Practise_14_09 {
+    void test() {
+        /**
+         *  见 Practise_14_02
+         */
+    }
+}
+
+namespace Practise_14_10 {
+    void test() {
+        /**
+         *  0-201-99999-9 10 24.95
+         
+            这个很 OK
+         
+            10 24.95 0-210-99999-9
+         
+            10 被当作了 bookNo
+            24 被当作了 units_sold
+            0.95 被当作 price
+         
+            然后返回，这个也是 OK 的，只不过和你的意图不一致
+         */
+    }
+}
+
+namespace Practise_14_11 {
+    void test() {
+        
+        /**
+         *  结果乱套了呗
+         
+            s.revenue = 24 * 0.95
+         */
+    }
+}
+
+namespace Practise_14_12 {
+    void test() {
+        /**
+         *  见 Practise_14_05
+         */
+    }
+}
+
+namespace Practise_14_13 {
+    void test() {
+        /**
+         *  我觉得不需要耶
+         */
+    }
+}
+
+namespace Practise_14_14 {
+    void test() {
+        /**
+         *  如果使用 operator+
+            那么首先，创建一个对象
+            有可能要做一些额外的赋值工作
+            然后将该对象的所有字段都增加
+            然后返回该对象，返回该对象时会触发一次拷贝构造或者移动构造
+         
+            如果使用 operator+=
+            那么首先触发一次拷贝构造（精确匹配）
+            然后将该对象所有字段增加  // 不用做额外的赋值工作，因为使用现成的对象
+            然后返回该对象，返回该对象时触发一次拷贝构造或者移动构造
+            在最好情况下，使用 operator+= 仅需要一次拷贝构造和一次移动构造
+         
+         */
+    }
+}
+
+namespace Practise_14_15 {
+    void test() {
+        /**
+         *  Book 不应该包含其他运算符了～不论是逻辑还是算术
+         */
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_02::test();
+    Practise_14_10::test();
     
     return 0;
 }
