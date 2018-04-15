@@ -1892,7 +1892,6 @@ namespace Practise_13_53 {
         int i;
     };
     
-    
     class HHasPtr {
         friend void swap(HHasPtr &a, HHasPtr &b) {
             using std::swap;
@@ -1903,6 +1902,14 @@ namespace Practise_13_53 {
         HHasPtr(const string &s = string()) : ps(new string(s)), i(0) {}
         HHasPtr(const HHasPtr &hp) : ps(new string(*hp.ps)), i(hp.i) {}
         HHasPtr(HHasPtr &&hp) : ps(hp.ps), i(hp.i) { hp.ps = nullptr; }
+        //❌ 冲突
+//        HHasPtr& operator=(HHasPtr &p) {
+//            auto d = new string(*p.ps);
+//            delete ps;
+//            ps = d;
+//            i = p.i;
+//            return *this;
+//        }
         HHasPtr& operator=(HHasPtr hp) {
             swap(*this, hp);
             return *this;
@@ -1945,6 +1952,15 @@ namespace Practise_13_53 {
         
         cout << "交换并拷贝的移动 : " << (e - s) * 1.0 / CLOCKS_PER_SEC << endl;
         
+    }
+}
+
+namespace Practise_13_54 {
+    void test() {
+        
+        /**
+         *  Use of overloaded operator '=' is ambiguous (with operand types 'Practise_13_53::HHasPtr' and 'Practise_13_53::HHasPtr')
+         */
     }
 }
 
