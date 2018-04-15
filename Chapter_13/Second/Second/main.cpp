@@ -1964,10 +1964,110 @@ namespace Practise_13_54 {
     }
 }
 
+namespace YH9 {
+    /**
+     *  如果一个成员函数有引用限定符，则具有相同参数列表的所有版本都必须有引用限定符
+     */
+    class A {
+    public:
+        A () = default;
+        A (const A& a) = default;
+        A& operator=(const A &a) && { return *this; }
+//        A& operator=(const A &a) & { return *this; }
+    };
+    A foo () {
+        return A();
+    }
+    void test() {
+        
+        A a, c;
+        foo() = a;
+//        c = a;
+        
+    }
+}
+
+namespace Practise_13_55 {
+    class StrBlob {
+    public:
+        StrBlob() : data(make_shared<vector<string>>()) {}
+        string& front() { chk_empty();  return data->front(); }
+        string& back() { chk_empty();  return data->back(); }
+        void push_back(const string &s) {
+            data->push_back(s);
+        }
+        void push_back(string &&s) {
+            data->push_back(s);
+        }
+    private:
+        shared_ptr<vector<string>> data;
+        void chk_empty() {
+            if (data->empty()) {
+                throw out_of_range("empty!");
+            }
+        }
+    };
+    void test() {
+        
+    }
+}
+
+namespace Practise_13_56 {
+    class Foo {
+        Foo sorted() const &;
+    };
+//    Foo Foo::sorted() const & {
+//        Foo ret(*this);
+//        return ret.sorted();
+//    }
+    void test() {
+        /**
+         *  递归调用并造成栈溢出
+         */
+    }
+}
+
+namespace Practise_13_57 {
+    void test() {
+        
+        /**
+         *  这个是 OK 的，因为调用右值版本的 sorted
+         */
+    }
+}
+
+namespace Practise_13_58 {
+    class Foo {
+    public:
+        Foo sorted() &&;
+        Foo sorted() const &;
+    private:
+        vector<int> data;
+    };
+//    Foo Foo::sorted() &
+//    {
+//        Foo ret(*this);
+//        return ret.sorted();
+//    }
+    Foo Foo::sorted() const &
+    {
+        return Foo(*this).sorted();
+    }
+    Foo Foo::sorted() &&
+    {
+        sort(data.begin(), data.end());
+        return *this;
+    }
+    void test() {
+        Foo o;
+        o.sorted();
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_13_53::test();
+    Practise_13_58::test();
     
     return 0;
 }
