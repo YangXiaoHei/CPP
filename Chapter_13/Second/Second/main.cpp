@@ -1519,6 +1519,317 @@ namespace YH8 {
     }
 }
 
+namespace Practise_13_49 {
+    
+    /**
+     *  StrVec
+     */
+    class StrVec {
+    public:
+        StrVec () : elements(nullptr), first_free(nullptr), cap(nullptr) {}
+        StrVec (const StrVec &s);
+        StrVec& operator=(const StrVec &s);
+        StrVec (StrVec &&s) noexcept;
+        StrVec& operator=(StrVec &&s) noexcept;
+        ~StrVec() { free(); }
+        
+    public:
+        void push_back(const string& s) {
+            chk_n_alloc();
+            alloc.construct(first_free++, s);
+        }
+        size_t size() const { return first_free - elements; }
+        size_t capacity() const { return cap - elements; }
+        string *begin() const { return elements; }
+        string *end() const { return first_free; }
+        
+    private:
+        static allocator<string> alloc;
+        string *elements;
+        string *first_free;
+        string *cap;
+        void reallocate();
+        void chk_n_alloc() {
+            if (size() == capacity()) {
+                reallocate();
+            }
+        }
+        void free() {
+            if (elements) {
+                auto p = first_free;
+                while (p != elements) {
+                    alloc.destroy(--p);
+                }
+                alloc.deallocate(elements, cap - elements);
+            }
+        }
+        pair<string *, string *> alloc_n_copy(const string *b, const string *e);
+    };
+    allocator<string> StrVec::alloc;
+    
+    pair<string *, string *>
+    StrVec::alloc_n_copy(const string *b, const string *e) {
+        auto d = alloc.allocate(e - b);
+        return { d, uninitialized_copy(make_move_iterator(b),
+                                       make_move_iterator(e), d) };
+    }
+    void StrVec::reallocate() {
+        size_t newcap = size() ? size() * 2 : 1;
+        auto d = alloc.allocate(newcap);
+        auto dest = d;
+        auto src = elements;
+        for (int i = 0; i < size(); ++i) {
+            alloc.construct(dest++, std::move(*src++));
+        }
+        free();
+        elements = d;
+        first_free = dest;
+        cap = elements + newcap;
+    }
+    
+    StrVec::StrVec(const StrVec &s) {
+        auto d = alloc_n_copy(s.begin(), s.end());
+        elements = d.first;
+        first_free = cap = d.second;
+    }
+    
+    StrVec& StrVec::operator=(const StrVec& s) {
+        auto d = alloc_n_copy(s.begin(), s.end());
+        free();
+        elements = d.first;
+        first_free = cap = d.second;
+        return *this;
+    }
+    
+    StrVec::StrVec(StrVec &&s) noexcept :
+    elements(s.elements), first_free(s.first_free), cap(s.cap)  {
+        s.elements = nullptr;
+        s.first_free = nullptr;
+        s.cap = nullptr;
+    }
+    
+    StrVec& StrVec::operator=(Practise_13_49::StrVec &&s) noexcept {
+        if (this != &s) {
+            free();
+            elements = s.elements;
+            first_free = s.first_free;
+            cap = s.cap;
+            s.elements = s.first_free = s.cap = nullptr;
+        }
+        return *this;
+    }
+    
+    /**
+     *  String
+     */
+    class String {
+    public:
+        String () : String("") {}
+        String (const char *p) {
+            const char *q = p;
+            while (*q) q++;
+            range_initializer(p, q);
+        }
+        String (const String &s) {
+            range_initializer(s.begin, s.end);
+        }
+        String& operator=(const String &s) {
+            auto d = alloc_n_copy(s.begin, s.end);
+            free();
+            begin = d.first;
+            end = d.second;
+            return *this;
+        }
+        String (String &&s) noexcept : begin(s.begin), end(s.end) {
+            s.begin = s.end = nullptr;
+        }
+        String& operator=(String &&s) noexcept {
+            if (this != &s) {
+                free();
+                begin = s.begin;
+                end = s.end;
+                s.begin = s.end = nullptr;
+            }
+            return *this;
+        }
+        ~String() {
+            free();
+        }
+    private:
+        allocator<char> alloc;
+        char *begin;
+        char *end;
+        pair<char *, char *> alloc_n_copy(const char *b, const char *e) {
+            auto d = alloc.allocate(e - b);
+            return {d, uninitialized_copy(b, e, d)};
+        }
+        void free() { alloc.deallocate(begin, end - begin); }
+        void range_initializer(const char *b, const char *e) {
+            auto d = alloc_n_copy(b, e);
+            begin = d.first;
+            end = d.second;
+        }
+    };
+    
+    class Folder;
+    class Message {
+        
+    public:
+        Message(const string &s = string()) : content(s) {}
+        Message(const Message& m);
+        Message& operator=(const Message &m);
+        Message(Message &&m);
+        Message& operator=(Message &&m);
+        ~Message();
+        
+    public:
+        Message& save(Folder *f);
+        Message& remove(Folder *f);
+        
+    private:
+        string content;
+        set<Folder *> folders;
+    };
+    
+    class Folder {
+        
+    public:
+        Folder(const string &s = string()) : title(s) {}
+        Folder(const Folder &f);
+        Folder(Folder &&f);
+        Folder& operator=(const Folder &f);
+        Folder& operator=(Folder &&f);
+        ~Folder();
+        
+    public:
+        void addMsg(Message *m);
+        void remMsg(Message *m);
+        
+    private:
+        string title;
+        set<Message *> msgs;
+    };
+    
+    Message::~Message() {
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+    }
+    
+    Message::Message(const Message &m) {
+        for (auto f : m.folders) {
+            f->addMsg(this);
+        }
+    }
+    
+    Message& Message::operator=(const Message &m) {
+        for (auto f : folders) {
+            f->remMsg(this);
+        }
+        folders = m.folders;
+        content = m.content;
+        for (auto f : folders) {
+            f->addMsg(this);
+        }
+        return *this;
+    }
+    
+    Message& Message::save(Folder *f) {
+        f->addMsg(this);
+        folders.insert(f);
+        return *this;
+    }
+    
+    Message& Message::remove(Folder *f) {
+        f->remMsg(this);
+        folders.erase(f);
+        return *this;
+    }
+    
+    Message::Message(Message &&m) : content(std::move(m.content)) {
+        folders = std::move(m.folders);
+        for (auto f : m.folders) {
+            f->remMsg(&m);
+            f->addMsg(this);
+        }
+        m.folders.clear();
+    }
+    
+    Message& Message::operator=(Message &&m) {
+        if (this != &m) {
+            for (auto f : folders) {
+                f->remMsg(this);
+            }
+            content = std::move(m.content);
+            folders = std::move(m.folders);
+            for (auto f : m.folders) {
+                f->remMsg(&m);
+                f->addMsg(this);
+            }
+            m.folders.clear();
+        }
+        return *this;
+    }
+    
+    Folder::Folder(const Folder &f) {
+        for (auto m : f.msgs) {
+            m->save(this);
+        }
+    }
+    
+    Folder& Folder::operator=(const Folder &f) {
+        for (auto m : msgs) {
+            m->remove(this);
+        }
+        msgs = f.msgs;
+        for (auto m : msgs) {
+            m->save(this);
+        }
+        return *this;
+    }
+    
+    Folder::Folder(Folder &&f) {
+        msgs = std::move(f.msgs);
+        for (auto m : msgs) {
+            m->remove(&f);
+            m->save(this);
+        }
+        f.msgs.clear();
+    }
+    
+    Folder& Folder::operator=(Folder &&f) {
+        if (this != &f) {
+            for (auto m : msgs) {
+                m->remove(this);
+            }
+            msgs = std::move(f.msgs);
+            for (auto m : msgs) {
+                m->save(this);
+            }
+            f.msgs.clear();
+        }
+        return *this;
+    }
+    
+    Folder::~Folder() {
+        for (auto m : msgs) {
+            m->remove(this);
+        }
+    }
+    
+    void Folder::addMsg(Practise_13_49::Message *m) {
+        msgs.insert(m);
+    }
+    
+    void Folder::remMsg(Practise_13_49::Message *m) {
+        msgs.erase(m);
+    }
+    
+    void test() {
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
