@@ -290,6 +290,14 @@ namespace Practise_14_16 {
             return data->front();
             
         }
+        
+        string& operator[](size_t n) {
+            return (*data)[n];
+        }
+        const string& operator[](size_t n) const {
+            return (*data)[n];
+        }
+        
         string& back() const {
             chk_size(0, "empty!");
             return data->back();
@@ -334,16 +342,67 @@ namespace Practise_14_16 {
             return (*ret)[cur];
         }
         
+        string& operator[](size_t n) {
+            auto d = chk_return();
+            return (*d)[n];
+        }
+        
+        const string& operator[](size_t n) const {
+            auto d = chk_return();
+            return (*d)[n];
+        }
+        
         StrBlobPtr& operator++() {
+            chk_return();
             ++cur;
+            return *this;
+        }
+        
+        StrBlobPtr& operator--() {
+            --cur;
             chk_return();
             return *this;
         }
         
+        StrBlobPtr operator++(int) {
+            StrBlobPtr old = *this;
+            ++*this;
+            return old;
+        }
+        
+        StrBlobPtr operator--(int) {
+            StrBlobPtr old = *this;
+            --*this;
+            return old;
+        }
+        
+        StrBlobPtr& operator+=(size_t n) {
+            cur += n;
+            return *this;
+        }
+        
+        StrBlobPtr& operator-=(size_t n) {
+            cur -= n;
+            return *this;
+        }
+        
+        StrBlobPtr& operator+(size_t n) {
+            StrBlobPtr n = *this;
+            *this += n;
+            return n;
+        }
+        
+        StrBlobPtr& operator-(size_t n) {
+            StrBlobPtr n = *this;
+            *this -= n;
+            return n;
+        }
+        
+        
     private:
         weak_ptr<vector<string>> wptr;
         size_t cur;
-        shared_ptr<vector<string>> chk_return() {
+        shared_ptr<vector<string>> chk_return() const {
             auto ret = wptr.lock();
             if (!ret) {
                 throw runtime_error("no exitst");
@@ -387,6 +446,14 @@ namespace Practise_14_16 {
             }
             return *this;
         }
+        
+        string& operator[](size_t n) {
+            return elements[n];
+        }
+        const string& operator[](size_t n) const {
+            return elements[n];
+        }
+        
         StrVec(const StrVec& s) {
             auto data = alloc_n_copy(s.begin(), s.end());
             elements = data.first;
@@ -487,6 +554,12 @@ namespace Practise_14_16 {
             char *q = const_cast<char *>(p);
             while (*q) ++q;
             range_initializer(p, q);
+        }
+        char& operator[](size_t n) {
+            return begin[n];
+        }
+        const char& operator[](size_t n) const {
+            return begin[n];
         }
         ~String() {
             free();
@@ -600,6 +673,37 @@ namespace Practise_14_25 {
         cout << b << endl;
     }
 }
+
+namespace Practise_14_26 {
+    void test() {
+        /**
+         *  见 Practise_14_16
+         */
+    }
+}
+
+namespace Practise_14_27 {
+    void test() {
+        /**
+         *  见 Practise_14_16
+         */
+    }
+}
+namespace Practise_14_28 {
+    void test() {
+        /**
+         *  见 Practise_14_16
+         */
+    }
+}
+namespace Practise_14_29 {
+    void test() {
+        /**
+         *  ++ 和 -- 改变了自身的状态
+         */
+    }
+}
+
 
 
 int main(int argc, const char * argv[]) {
