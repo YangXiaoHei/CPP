@@ -55,3 +55,4 @@ Chapter_02/cmake-build-debug/CMakeFiles/Makefile2
 Chapter_02/cmake-build-debug/Chapter_02
 Chapter_02/cmake-build-debug/CMakeFiles/3.9.6/CompilerIdCXX/CMakeCXXCompilerId.cpp
 *.xcbkptlist
+*.xcscheme

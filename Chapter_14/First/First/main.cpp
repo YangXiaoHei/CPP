@@ -705,14 +705,231 @@ namespace Practise_14_29 {
 }
 
 namespace YH {
+    class StrBlobPtr;
+    class ConstStrBlobPtr;
+    class StrBlob {
+        friend class StrBlobPtr;
+        friend class ConstStrBlobPtr;
+    public:
+        StrBlob() : data(make_shared<vector<string>>()) {}
+        StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
+        size_t size() const { return data->size(); }
+        bool empty() const { return data->empty(); }
+        void push_back(const string &s) {
+            data->push_back(s);
+        }
+        string& front() {
+            chk_size(0, "empty");
+            return data->front();
+        }
+        string& back() {
+            chk_size(0, "empty");
+            return data->back();
+        }
+        StrBlobPtr begin();
+        StrBlobPtr end();
+        
+    private:
+        shared_ptr<vector<string>> data;
+        void chk_size(size_t n, const string &msg) {
+            if (n >= data->size()) {
+                throw out_of_range(msg);
+            }
+        }
+    };
+    class StrBlobPtr {
+    public:
+        StrBlobPtr(const StrBlob& s) : wptr(s.data), cur(0) {}
+        StrBlobPtr(const StrBlob& s, size_t sz) : wptr(s.data), cur(sz) {}
+        
+        string& operator*() const {
+            auto ret = chk_return();
+            return (*ret)[cur];
+        }
+        
+        string* operator->() {
+            return &this->operator*();
+        }
+        
+        StrBlobPtr& operator++() {
+            chk_return();
+            ++cur;
+            return *this;
+        }
+        
+        StrBlobPtr& operator--() {
+            --cur;
+            chk_return();
+            return *this;
+        }
+        
+        StrBlobPtr operator++(int) {
+            StrBlobPtr old = *this;
+            ++*this;
+            return old;
+        }
+        
+        StrBlobPtr operator--(int) {
+            StrBlobPtr old = *this;
+            --*this;
+            return old;
+        }
+        
+    private:
+        size_t cur;
+        weak_ptr<vector<string>> wptr;
+        shared_ptr<vector<string>> chk_return() const {
+            auto ret = wptr.lock();
+            if (!ret) {
+                throw runtime_error("runtime err");
+            }
+            if (cur >= ret->size()) {
+                throw out_of_range("out of range");
+            }
+            return ret;
+        }
+    };
     
+    StrBlobPtr StrBlob::begin() { return StrBlobPtr(*this); }
+    StrBlobPtr StrBlob::end() { return StrBlobPtr(*this, data->size()); }
+    
+    class A {
+    public:
+        A(const StrBlobPtr &s) : ptr(make_shared<StrBlobPtr>(s)) {}
+        StrBlobPtr& operator*() {
+            return *(ptr);
+        }
+        StrBlobPtr* operator->() {
+            return & this->operator*();
+        }
+    private:
+        shared_ptr<StrBlobPtr> ptr;
+    };
+    
+    class ConstStrBlobPtr {
+    public:
+        ConstStrBlobPtr(const StrBlob& s) : wptr(s.data), cur(0) {}
+        ConstStrBlobPtr(const StrBlob& s, size_t cu) : wptr(s.data), cur(cu) {}
+        
+        const string& operator*() {
+            auto ret = chk_size();
+            return (*ret)[cur];
+        }
+        
+        ConstStrBlobPtr& operator++() {
+             ++cur;
+            chk_size();
+            return *this;
+        }
+        
+        ConstStrBlobPtr& operator--() {
+            chk_size();
+            --cur;
+            return *this;
+        }
+        
+        ConstStrBlobPtr operator++(int) {
+            ConstStrBlobPtr old = *this;
+            ++*this;
+            return old;
+        }
+        
+        ConstStrBlobPtr operator--(int) {
+            ConstStrBlobPtr old = *this;
+            --*this;
+            return old;
+        }
+        
+    private:
+        weak_ptr<vector<string>> wptr;
+        size_t cur;
+        shared_ptr<vector<string>> chk_size() const {
+            auto ret = wptr.lock();
+            if (!ret) throw runtime_error("runtime error");
+            if (cur >= ret->size()) throw out_of_range("out of range");
+            return ret;
+        }
+    };
+    
+    void test() {
+        
+    }
 }
 
+namespace Practise_14_31 {
+    void test() {
+        /**
+         *  因为没有动态内存的申请
+         */
+    }
+}
 
+namespace YH1 {
+    struct absInt {
+        int operator()(int val) const {
+            return val < 0 ? -val : val;
+        }
+    };
+    class PrintString {
+    public:
+        PrintString(ostream& o = cout, char c = ' ') : os(o), sep(c) {}
+        void operator()(const string &s) const { os << s << sep; }
+    private:
+        ostream &os;
+        char sep;
+    };
+    void test() {
+//        int i = -42;
+//        absInt abs;
+//        cout << abs(i) << endl;
+        
+        PrintString printer;
+        printer("haha");
+        
+        PrintString errors(cerr, '\n');
+        errors("haha");
+    }
+}
+
+namespace Practise_14_33 {
+    void test() {
+        /**
+         *  256 个
+         */
+    }
+}
+
+namespace Practise_14_34 {
+    struct A {
+        int operator()(bool success, int second, int third) {
+            return success ? second : third;
+        }
+    };
+    void test() {
+        A a;
+        cout << a(true, 3, 2) << endl;
+        cout << a(false, 3, 2) << endl;
+    }
+}
+
+namespace Practise_14_35 {
+    struct A {
+        string operator()(istream& is) {
+            string s;
+            is >> s;
+            if (!is) return string();
+            return s;
+        }
+    };
+    void test() {
+        A a;
+        cout << a(cin) << endl;
+    }
+}
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_25::test();
+    Practise_14_35::test();
     
     return 0;
 }
