@@ -972,10 +972,28 @@ namespace Practise_14_38 {
     }
 }
 
+namespace Practise_14_39 {
+    void test() {
+        ifstream fin("/Users/bot/Desktop/algs4-data/tinyTale.txt");
+        size_t cnt19 = 0, cnt10 = 0;
+        string word;
+        while (fin >> word) {
+            if (word.length() >= 1 && word.length() <= 9) {
+                cnt19++;
+            }
+            if (word.length() > 10) {
+                cnt10++;
+            }
+        }
+        cout << "1 ~ 9 的单词有 : " << cnt19 << endl;
+        cout << "10 以上的单词有 : " << cnt10 << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_38::test();
+    Practise_14_39::test();
     
     return 0;
 }
