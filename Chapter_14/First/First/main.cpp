@@ -261,6 +261,9 @@ namespace Practise_14_15 {
 namespace Practise_14_16 {
     
     class StrBlobPtr;
+    /**
+     *  StrBlob
+     */
     class StrBlob {
         friend class StrBlobPtr;
         friend bool operator==(const StrBlob& a, const StrBlob& b) {
@@ -296,6 +299,9 @@ namespace Practise_14_16 {
         }
     };
     
+    /**
+     *  StrBlobPtr
+     */
     class StrBlobPtr {
         friend bool operator==(const StrBlobPtr& a, const StrBlobPtr& b) {
             auto reta = a.wptr.lock();
@@ -342,7 +348,106 @@ namespace Practise_14_16 {
     StrBlobPtr StrBlob::begin() { return StrBlobPtr(*this); }
     StrBlobPtr StrBlob::end() { return StrBlobPtr(*this, data->size()); }
     
-    
+    /**
+     *  StrVec
+     */
+    class StrVec {
+        friend bool operator==(const StrVec &a, const StrVec &b) {
+            if (a.size() != b.size() || a.capacity() != b.capacity())
+                return false;
+            for (string *p = a.elements, *q = b.elements; p != a.first_free; ++p, ++q)
+                if (*p != *q)
+                    return false;
+            return true;
+        }
+        friend bool operator!=(const StrVec &a, const StrVec &b) {
+            return !(a == b);
+        }
+    public:
+        StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) {}
+        StrVec(initializer_list<string> il) {
+            for (auto it = il.begin(); it != il.end(); ++it) {
+                push_back(*it);
+            }
+        }
+        StrVec(const StrVec& s) {
+            auto data = alloc_n_copy(s.begin(), s.end());
+            elements = data.first;
+            first_free = cap = data.second;
+        }
+        StrVec& operator=(const StrVec& s) {
+            auto data = alloc_n_copy(s.begin(), s.end());
+            free();
+            elements = data.first;
+            first_free = cap = data.second;
+            return *this;
+        }
+        StrVec(StrVec &&s) {
+            auto data = alloc_n_move(s.begin(), s.end());
+            elements = data.first;
+            first_free = cap = data.second;
+            s.elements = s.first_free = s.cap = nullptr;
+        }
+        StrVec& operator=(StrVec &&s) {
+            if (this != &s) {
+                free();
+                auto data = alloc_n_move(s.begin(), s.end());
+                elements = data.first;
+                first_free = cap = data.second;
+                s.elements = s.first_free = s.cap = nullptr;
+            }
+            return *this;
+        }
+        
+        void push_back(const string &s) {
+            chk_n_alloc();
+            alloc.construct(first_free++, s);
+        }
+        
+        string *begin() const { return elements; }
+        string *end() const { return first_free; }
+        size_t size() const { return first_free - elements; }
+        size_t capacity() const { return cap - elements; }
+        
+        ~StrVec() {
+            free();
+        }
+        
+    private:
+        static allocator<string> alloc;
+        string *elements;
+        string *first_free;
+        string *cap;
+        void free() {
+            if (elements) {
+                auto p = first_free;
+                while (p != elements) {
+                    alloc.destroy(--p);
+                }
+                alloc.deallocate(elements, cap - elements);
+            }
+        }
+        void chk_n_alloc() { if (size() == capacity()) reallocate(); }
+        void reallocate() {
+            size_t new_cap = size() ? size() * 2 : 1;
+            auto data = alloc.allocate(new_cap);
+            auto dest = uninitialized_copy(make_move_iterator(elements),
+                                           make_move_iterator(first_free), data);
+            elements = data;
+            first_free = dest;
+            cap = elements + new_cap;
+        }
+        pair<string *, string *> alloc_n_copy(const string *a, const string *b) {
+            auto data = alloc.allocate(b - a);
+            return { data, uninitialized_copy(a, b, data)};
+        }
+        pair<string *, string *> alloc_n_move(const string *a, const string *b) {
+            auto data = alloc.allocate(b - a);
+            return { data, uninitialized_copy(make_move_iterator(a),
+                                              make_move_iterator(b), data) };
+        }
+    };
+    allocator<string> StrVec::alloc;
     
     void test() {
         
