@@ -1048,6 +1048,18 @@ namespace Practise_14_40 {
     }
 }
 
+namespace Practise_14_41 {
+    void test() {
+        /**
+         *  方便
+         
+            如果调用次数很多，并且不好用 lambda 实现，用函数
+            如果很好实现，用 lambda
+         */
+    }
+}
+
+
 
 int main(int argc, const char * argv[]) {
 
