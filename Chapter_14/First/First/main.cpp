@@ -973,20 +973,78 @@ namespace Practise_14_38 {
 }
 
 namespace Practise_14_39 {
+    
+    struct A {
+        bool operator()(const string &a) {
+            return a.length() >= 1 && a.length() <= 9;
+        }
+    };
+    struct B {
+        bool operator()(const string &a) {
+            return a.length() > 10;
+        }
+    };
+    
     void test() {
         ifstream fin("/Users/bot/Desktop/algs4-data/tinyTale.txt");
         size_t cnt19 = 0, cnt10 = 0;
+        A a; B b;
         string word;
         while (fin >> word) {
-            if (word.length() >= 1 && word.length() <= 9) {
-                cnt19++;
-            }
-            if (word.length() > 10) {
-                cnt10++;
-            }
+            if (a(word))  cnt19++;
+            if (b(word))  cnt10++;
         }
         cout << "1 ~ 9 的单词有 : " << cnt19 << endl;
         cout << "10 以上的单词有 : " << cnt10 << endl;
+    }
+}
+
+namespace Practise_14_40 {
+    struct A {
+        bool operator()(const string &a, const string &b) {
+            return a.size() < b.size();
+        }
+    };
+    
+    struct B {
+        B(size_t s) : sz(s) {}
+        size_t sz = 0;
+        bool operator()(const string &a) {
+            return a.size() >= sz;
+        }
+    };
+    
+    struct C {
+        void operator()(const string &a) {
+            cout << a << " ";
+        }
+    };
+    
+    void elimDups(vector<string> &words) {
+        sort(words.begin(), words.end());
+        auto end_unique = unique(words.begin(), words.end());
+        words.erase(end_unique, words.end());
+    }
+
+    string make_plural(size_t cnt, const string &a, const string &b) {
+        return cnt == 1 ? a : a + b;
+    }
+
+    void biggies(vector<string> &words, vector<string>::size_type sz) {
+
+        elimDups(words);
+        
+        A a; B b(sz); C c;
+
+        stable_sort(words.begin(), words.end(), a);
+
+        auto wc = find_if(words.begin(), words.end(), b);
+
+        auto cnt = words.end() - wc;
+        cout << cnt << " " << make_plural(cnt, "word", "s")
+        << " of length " << sz << " or longer " << endl;
+
+        for_each(wc, words.end(), c);
     }
 }
 
