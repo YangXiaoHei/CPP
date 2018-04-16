@@ -449,6 +449,46 @@ namespace Practise_14_16 {
     };
     allocator<string> StrVec::alloc;
     
+    class String {
+        friend bool operator==(const String &a, const String &b) {
+            if (a.length() != b.length())
+                return false;
+            for (char *p = a.begin, *q = b.begin; p != a.end; ++p, ++q)
+                if (*p != *q)
+                    return false;
+            return true;
+        }
+        friend bool operator!=(const String &a, const String &b) {
+            return !(a == b);
+        }
+    public:
+        String() : String("") {}
+        String(const char *p) {
+            char *q = const_cast<char *>(p);
+            while (*q) ++q;
+            range_initializer(p, q);
+        }
+        ~String() {
+            free();
+        }
+        size_t length() const { return end - begin; }
+    private:
+        static allocator<char> alloc;
+        char *begin;
+        char *end;
+        void free() { alloc.deallocate(begin, end - begin); }
+        pair<char *, char *> alloc_n_copy(const char *b, const char *e) {
+            auto data = alloc.allocate(e - b);
+            return { data, uninitialized_copy(b, e, data)};
+        }
+        void range_initializer(const char *b, const char *e) {
+            auto data = alloc_n_copy(b, e);
+            begin = data.first;
+            end = data.second;
+        }
+    };
+    allocator<char> String::alloc;
+    
     void test() {
         
     }
