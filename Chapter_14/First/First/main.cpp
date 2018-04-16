@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <list>
+#include <fstream>
 
 using namespace std;
 
@@ -951,20 +952,30 @@ namespace Practise_14_37 {
     }
 }
 
-namespace YH2 {
+namespace Practise_14_38 {
     void test() {
-        
-        
-        
-        
-        
+
+        ifstream fin("/Users/bot/Desktop/algs4-data/tinyTale.txt");
+        string word;
+        map<string, size_t> mapper;
+        while (fin >> word) {
+            auto rel = mapper.find(word);
+            if (rel == mapper.end())
+                mapper.insert(make_pair(word, 1));
+            else
+                mapper.insert(make_pair(word, ++rel->second));
+        }
+        for (auto it = mapper.begin(); it != mapper.end(); ++it) {
+            cout << it->first << "\t:" << it->second << endl;
+        }
         
     }
 }
 
+
 int main(int argc, const char * argv[]) {
 
-    Practise_14_37::test();
+    Practise_14_38::test();
     
     return 0;
 }
