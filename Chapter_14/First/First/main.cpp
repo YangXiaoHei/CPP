@@ -927,9 +927,44 @@ namespace Practise_14_35 {
     }
 }
 
+namespace Practise_14_36 {
+    void test() {
+        using Practise_14_35::A;
+        A a;
+        vector<string> vs;
+        for (int i = 0; i < 10; i++) {
+            vs.push_back(a(cin));
+        }
+        for (auto it = vs.cbegin(); it != vs.cend(); ++it) {
+            cout << *it << endl;
+        }
+    }
+}
+
+namespace Practise_14_37 {
+    void test() {
+        vector<string> vs = { "1", "5", "3", "4", "5", "6", "7", "5"};
+        replace_if(vs.begin(), vs.end(), [](const string &a) { return a == "5"; }, "10");
+        for (auto it = vs.begin(); it != vs.end(); ++it) {
+            cout << *it << endl;
+        }
+    }
+}
+
+namespace YH2 {
+    void test() {
+        
+        
+        
+        
+        
+        
+    }
+}
+
 int main(int argc, const char * argv[]) {
 
-    Practise_14_35::test();
+    Practise_14_37::test();
     
     return 0;
 }
