@@ -43,10 +43,8 @@ namespace Practise_14_02 {
             return is;
         }
         friend Sales_data operator+(const Sales_data &a, const Sales_data &b) {
-            Sales_data sum;
-            sum.units_sold = a.units_sold + b.units_sold;
-            sum.revenue = a.revenue + b.revenue;
-            sum.bookNo = a.bookNo;
+            Sales_data sum = a;
+            sum += b;
             return sum;
         }
     public:
@@ -449,6 +447,9 @@ namespace Practise_14_16 {
     };
     allocator<string> StrVec::alloc;
     
+    /**
+     *  String
+     */
     class String {
         friend bool operator==(const String &a, const String &b) {
             if (a.length() != b.length())
@@ -494,21 +495,53 @@ namespace Practise_14_16 {
     }
 }
 
+namespace Practise_14_19 {
+    void test() {
+        /**
+         *  需要关系运算符，因为两本书是否相同需要判定条件，但不需要逻辑运算符
+         */
+    }
+}
 
+namespace Practise_14_20 {
+    void test() {
+        /**
+         *  见 Practise_14_02
+         */
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+namespace Practise_14_21 {
+    class A {
+        friend A operator+(const A &a, const A &b) {
+            A x;
+            x.bookNo = a.bookNo;
+            x.units_sold = a.units_sold + b.units_sold;
+            x.revenue = a.revenue + b.revenue;
+            return x;
+        }
+    public:
+        A() = default;
+        A(const string &s, unsigned u, double r) : bookNo(s), units_sold(u), revenue(r) {}
+        A(const string &s) : A(s, 0, 0.0) {}
+        
+        A& operator+=(const A &b) {
+            A olda = *this;
+            *this = olda + b;
+            // 拷贝赋值运算符，+ 里面还用了两个拷贝构造，没必要
+            return *this;
+        }
+    private:
+        string bookNo;
+        unsigned units_sold;
+        double revenue;
+    };
+    void test() {
+        /**
+         *  见注释
+         */
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
