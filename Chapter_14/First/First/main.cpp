@@ -386,16 +386,16 @@ namespace Practise_14_16 {
             return *this;
         }
         
-        StrBlobPtr& operator+(size_t n) {
-            StrBlobPtr n = *this;
+        StrBlobPtr operator+(size_t n) {
+            StrBlobPtr h = *this;
             *this += n;
-            return n;
+            return h;
         }
         
-        StrBlobPtr& operator-(size_t n) {
-            StrBlobPtr n = *this;
+        StrBlobPtr operator-(size_t n) {
+            StrBlobPtr h = *this;
             *this -= n;
-            return n;
+            return h;
         }
         
         
@@ -702,6 +702,10 @@ namespace Practise_14_29 {
          *  ++ 和 -- 改变了自身的状态
          */
     }
+}
+
+namespace YH {
+    
 }
 
 
