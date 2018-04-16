@@ -125,6 +125,18 @@ namespace Practise_14_05 {
     public:
         Book() = default;
         Book(const string &n, const string &a) : name(n), author(a) {}
+        Book(Book &&b) : name(std::move(b.name)), author(std::move(b.author)) { }
+        Book& operator=(Book &&b) {
+            name = std::move(b.name);
+            author = std::move(b.author);
+            return *this;
+        }
+        Book& operator=(initializer_list<string> il) {
+            auto it = il.begin();
+            author = *it++;
+            name = *it;
+            return *this;
+        }
         
     private:
         string name;
@@ -368,6 +380,13 @@ namespace Practise_14_16 {
                 push_back(*it);
             }
         }
+        StrVec& operator=(initializer_list<string> il) {
+            free();
+            for (auto it = il.begin(); it != il.end(); ++it) {
+                push_back(*it);
+            }
+            return *this;
+        }
         StrVec(const StrVec& s) {
             auto data = alloc_n_copy(s.begin(), s.end());
             elements = data.first;
@@ -525,6 +544,10 @@ namespace Practise_14_21 {
         A(const string &s, unsigned u, double r) : bookNo(s), units_sold(u), revenue(r) {}
         A(const string &s) : A(s, 0, 0.0) {}
         
+        A& operator=(const string &s) {
+            bookNo = s;
+            return *this;
+        }
         A& operator+=(const A &b) {
             A olda = *this;
             *this = olda + b;
@@ -543,10 +566,45 @@ namespace Practise_14_21 {
     }
 }
 
+namespace Practise_14_22 {
+    void test() {
+        /**
+         *  见 Practise_14_21
+         */
+    }
+}
+
+namespace Practise_14_23 {
+    void test() {
+        /**
+         *  见 Practise_14_16
+         */
+    }
+}
+
+namespace Practise_14_24 {
+    void test() {
+        /**
+         *  见 Practise_14_05
+         */
+    }
+}
+
+namespace Practise_14_25 {
+    void test() {
+        /**
+         *  见 Practise_14_05
+         */
+        using Practise_14_05::Book;
+        Book b = { "yanghan", "C++ Primer5"};
+        cout << b << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_10::test();
+    Practise_14_25::test();
     
     return 0;
 }
