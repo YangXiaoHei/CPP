@@ -258,6 +258,113 @@ namespace Practise_14_15 {
     }
 }
 
+namespace Practise_14_16 {
+    
+    class StrBlobPtr;
+    class StrBlob {
+        friend class StrBlobPtr;
+        friend bool operator==(const StrBlob& a, const StrBlob& b) {
+            return *a.data == *b.data;
+        }
+        friend bool operator!=(const StrBlob& a, const StrBlob& b) {
+            return !(a == b);
+        }
+    public:
+        StrBlob() : data(make_shared<vector<string>>()) {}
+        StrBlob(initializer_list<string> il) : data(make_shared<vector<string>>(il)) {}
+        string& front() const {
+            chk_size(0, "empty!");
+            return data->front();
+            
+        }
+        string& back() const {
+            chk_size(0, "empty!");
+            return data->back();
+        }
+        size_t size() const { return data->size(); }
+        bool empty() const { return data->empty(); }
+        
+        StrBlobPtr begin();
+        StrBlobPtr end();
+        
+    private:
+        shared_ptr<vector<string>> data;
+        void chk_size(size_t i, const string &msg) const {
+            if (i >= data->size()) {
+                throw out_of_range(msg);
+            }
+        }
+    };
+    
+    class StrBlobPtr {
+        friend bool operator==(const StrBlobPtr& a, const StrBlobPtr& b) {
+            auto reta = a.wptr.lock();
+            auto retb = b.wptr.lock();
+            if ((reta == nullptr && retb != nullptr) ||
+                (reta != nullptr && retb == nullptr)) {
+                return false;
+            }
+            return (*reta) == (*retb) && a.cur == b.cur;
+        }
+        friend bool operator!=(const StrBlobPtr& a, const StrBlobPtr& b) {
+            return !(a == b);
+        }
+    public:
+        StrBlobPtr(StrBlob& s) : wptr(s.data), cur(0) {}
+        StrBlobPtr(StrBlob& s, size_t c) : wptr(s.data), cur(c) {}
+        
+        string operator*() {
+            auto ret = chk_return();
+            return (*ret)[cur];
+        }
+        
+        StrBlobPtr& operator++() {
+            ++cur;
+            chk_return();
+            return *this;
+        }
+        
+    private:
+        weak_ptr<vector<string>> wptr;
+        size_t cur;
+        shared_ptr<vector<string>> chk_return() {
+            auto ret = wptr.lock();
+            if (!ret) {
+                throw runtime_error("no exitst");
+            }
+            if (cur >= ret->size()) {
+                throw out_of_range("out of range");
+            }
+            return ret;
+        }
+    };
+    
+    StrBlobPtr StrBlob::begin() { return StrBlobPtr(*this); }
+    StrBlobPtr StrBlob::end() { return StrBlobPtr(*this, data->size()); }
+    
+    
+    
+    void test() {
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int main(int argc, const char * argv[]) {
 
