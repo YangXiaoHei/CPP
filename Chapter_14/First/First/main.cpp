@@ -1229,9 +1229,54 @@ namespace Practise_14_45 {
     }
 }
 
+namespace Practise_14_46 {
+    void test() {
+        /**
+         *  应该定义，比较方便
+            应该定义成 explicit 的，以便发生隐式转换造成误导
+         */
+    }
+}
+
+namespace Practise_14_47 {
+    struct Integral {
+        operator const int() { return i; } // 没意义，会被编译器忽略
+        operator int() const { return i; } // 承诺该函数将不会改变 obj 的状态
+        int i;
+    };
+}
+
+namespace Practise_14_48 {
+    void test() {
+        /**
+         *  应该，判断书籍是否存在的条件可以自己定义，bool 类型转换运算符一定定义为显示的
+         */
+    }
+}
+
+namespace Practise_14_49 {
+    class Book {
+    public:
+        Book(const string &a, const string &n) : author(a), name(n) {}
+        explicit operator bool() const { return author.length() > 0; }
+    private:
+        string author;
+        string name;
+    };
+    void test() {
+        Book a("YangHan","C++Primer"), b("","Algorithms_4");
+        if (a) {
+            cout << "a" << endl;
+        }
+        if (b) {
+            cout << "b" << endl;
+        }
+    }
+}
+
 int main(int argc, const char * argv[]) {
 
-    Practise_14_45::test();
+    Practise_14_49::test();
     
     return 0;
 }
