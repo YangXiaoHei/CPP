@@ -1113,7 +1113,7 @@ namespace YH2 {
         map<string, int(*)(int , int)> binops;
         binops.insert({ "+", add });
         binops.insert({ "%", mod });
-//        binops.insert({ "/", divide });
+//   ❌     binops.insert({ "/", divide });
         
         function<int(int, int)> f1 = add;
         function<int(int, int)> f2 = divide();
@@ -1144,7 +1144,7 @@ namespace YH2 {
         auto ff = ops.find("?");
         
         cout << (f ? "Exist" : "No Exist") << endl;
-//        cout << (*ff ? "Exist" : "No Exist") << endl;
+//   ❌     cout << (*ff ? "Exist" : "No Exist") << endl;
         
     }
 }
@@ -1274,9 +1274,107 @@ namespace Practise_14_49 {
     }
 }
 
+namespace YH4 {
+    /**
+     *  避免有二义性的类型转换
+     */
+    struct B;
+    struct A {
+        A() = default;
+        A(const B&) {}  // B -> A
+    };
+    struct B {
+        operator A() const { return A(); }  // A -> B
+    };
+    A f(const A&) { return A(); }
+    void test() {
+        B b;
+//        A a = f(b);  // ❌ 是 f(B::operator A()) 还是 f(A::A(const B&)) ?
+    }
+}
+
+namespace YH5 {
+    struct A {
+        A(int i = 0) {}
+        A(double) {}
+        operator int() const { return 1; }
+        operator double() const { return 1; }
+    };
+    void f2(long double) {}
+    void test() {
+        A a;
+//        f2(a); // ❌ 是 f(A::operator int()) 还是 f(A::operator double()) ?
+        
+        long lg;
+//        A a2(lg);  // ❌ 是 A::A(int) 还是 A::A(double) ?
+    }
+}
+
+namespace YH6 {
+    struct A {
+        A(int) {}
+    };
+    struct B {
+        B(int) {}
+    };
+    void manip(const A&) {}
+    void manip(const B&) {}
+    void test() {
+        //        manip(10);  // ❌ 二义性 是 A::A(int) 还是 B::B(int)
+    }
+}
+
+namespace YH7 {
+    struct A {
+        A(int) {}
+    };
+    struct B {
+        B(int) {}
+    };
+    struct C {
+        C(double);
+    };
+    void manip(const A&) {}
+    void manip(const C&) {}
+    void test() {
+//            manip(10);  // ❌ 二义性 ：即使一个需要转换一次，一个能精确匹配，还是二义性
+    }
+}
+
+namespace Practise_14_50 {
+    
+    struct LongDouble {
+        LongDouble(double = 0.0) {}
+        operator double() { return 0.0; }
+        operator float() { return 0.0; }
+    };
+    void calc(int a) {  }
+    void calc(LongDouble obj) {}
+    void test() {
+        
+        LongDouble ldObj;
+//        int ex1 = ldObj; // float 和 double 都需要转换，无法判断哪个更好
+        float ex2 = ldObj;  // float 精确匹配
+        
+        /**
+         *   review the order:
+         
+             exact match
+             const conversion
+             promotion
+             arithmetic or pointer conversion
+             class-type conversion
+         */
+        double dval;
+        calc(dval);
+    }
+}
+
+
+
 int main(int argc, const char * argv[]) {
 
-    Practise_14_49::test();
+    Practise_14_50::test();
     
     return 0;
 }
