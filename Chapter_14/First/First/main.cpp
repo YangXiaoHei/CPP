@@ -1059,11 +1059,33 @@ namespace Practise_14_41 {
     }
 }
 
+namespace Practise_14_42 {
+    void test() {
+        
+        using placeholders::_1;
+        
+        vector<int> iv { 1, 1000, 2000, 3000, 4000 };
+        long cnt = count_if(iv.begin(), iv.end(), bind(greater<int>(), _1, 1024));
+        cout << "比 1024 大的个数有 " << cnt << endl;
+        
+        vector<string> sv { "pooh", "pooh", "pooh", "yanghan", "lijie", "pooh"};
+        auto found = find_if(sv.begin(), sv.end(), bind(not_equal_to<string>(), _1, "pooh"));
+        cout << *found << endl;
+        
+        vector<int> iiv { 1, 2, 3, 4, 5, 6, 7 };
+        transform(iiv.begin(), iiv.end(), iiv.begin(), bind(multiplies<int>(), _1, 2));
+        for_each(iiv.begin(), iiv.end(), [](int i){ cout << i << " "; });
+        cout << endl;
+    }
+}
+
+
+
 
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_39::test();
+    Practise_14_42::test();
     
     return 0;
 }
