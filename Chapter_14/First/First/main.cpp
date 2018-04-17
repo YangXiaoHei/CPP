@@ -1171,10 +1171,44 @@ namespace Practise_14_44 {
     }
 }
 
+namespace YH3 {
+    /**
+     *  1、cin 定义了重载了 bool 的类型转换运算符
+        2、显示的类型转换 -> 防止隐式造成的隐患
+        3、转换成 bool 一般定义成 explicit 的，但用在条件中时，还是会发生隐式转换
+        
+     */
+    class SmallInt {
+    public:
+        SmallInt(int i = 0) : val(i) {
+            if (i < 0 || i > 255) {
+                throw out_of_range("Bad smallInt value");
+            }
+        }
+        // 可以在前面加上 explicit 修饰，这样就不会发生隐式类型转换，只能在显示要求时转换
+         explicit operator size_t() const { return val; }
+//        operator size_t() const { return val; }
+        
+        // 即使加上 explicit，隐式转换也会发生，比如用在条件中时
+         explicit operator bool() const { return !!val; }
+    private:
+        size_t val;
+    };
+    void test() {
+        SmallInt si(4);
+//        cout << si + 3.45 << endl;
+        cout << static_cast<size_t>(si) + 3.45 << endl;
+        
+        if (si) {
+            cout << "哈哈" << endl;
+        }
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_44::test();
+    YH3::test();
     
     return 0;
 }
