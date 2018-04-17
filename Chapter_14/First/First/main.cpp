@@ -1092,10 +1092,89 @@ namespace Practise_14_43 {
     }
 }
 
+namespace YH2 {
+    /**
+     *  具有相同的调用形式
+     */
+    int add(int i, int j) { return i + j; }
+    struct divide {
+        int operator() (int de, int di) {
+            return de / di;
+        }
+    };
+    /**
+     *  1、具有相同调用形式的 lambda，函数对象，函数指针，可以用 function 对象来包裹
+        2、不能直接将重载函数的名字存入 function 对象，会造成二义性，应该放函数指针，也可以利用 lambda 来消除二义性
+        3、
+     */
+    void test() {
+        auto mod = [](int i, int j) { return i % j; };
+        
+        map<string, int(*)(int , int)> binops;
+        binops.insert({ "+", add });
+        binops.insert({ "%", mod });
+//        binops.insert({ "/", divide });
+        
+        function<int(int, int)> f1 = add;
+        function<int(int, int)> f2 = divide();
+        function<int(int, int)> f3 = mod;
+        
+        cout << f1(1, 2) << endl;
+        cout << f2(3, 4) << endl;
+        cout << f3(6, 8) << endl;
+        
+        /**
+         *  利用 function 重新定义 map
+         */
+        
+        map<string, function<int(int, int)>> ops;
+        ops.insert( {"+", add} );
+        ops.insert( {"%", mod} );
+        ops.insert( {"/", divide()} );
+        ops.insert( {"-", minus<int>()});
+        ops.insert( {"*", [](int i, int j) { return i * j; } });
+        
+//        cout << ops.find("+")->second(1, 2) << endl;
+//        cout << ops.find("*")->second(3, 4) << endl;
+        cout << ops["+"](10, 5) << endl;
+        cout << ops["-"](20, 3) << endl;
+        cout << ops["/"](30, 4) << endl;
+        
+        auto f = ops["?"];
+        auto ff = ops.find("?");
+        
+        cout << (f ? "Exist" : "No Exist") << endl;
+//        cout << (*ff ? "Exist" : "No Exist") << endl;
+        
+    }
+}
+
+namespace Practise_14_44 {
+    void test() {
+        
+        map<string, function<int(int, int)>> ops;
+        ops.insert( { "+", [](int i, int j){ return i + j; } } );
+        ops.insert( { "-", [](int i, int j){ return i - j; } } );
+        ops.insert( { "*", [](int i, int j){ return i * j; } } );
+        ops.insert( { "/", [](int i, int j){ return i / j; } } );
+        ops.insert( { "%", [](int i, int j){ return i % j; } } );
+        
+        cout << "input ops" << endl;
+        string op;
+        cin >> op;
+        if (!cin) cout << "运算符不合法" << endl;
+        cout << "input two decimals" << endl;
+        int i, j;
+        cin >> i >> j;
+        if (!cin) cout << "运算数不合法" << endl;
+        cout << "the result is " << ops[op](i, j) << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_43::test();
+    Practise_14_44::test();
     
     return 0;
 }
