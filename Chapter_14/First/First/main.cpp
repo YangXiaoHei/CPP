@@ -1079,13 +1079,23 @@ namespace Practise_14_42 {
     }
 }
 
-
-
+namespace Practise_14_43 {
+    void test() {
+        
+        vector<int> iv{ 2, 4, 6, 8, 10};
+        int input;
+        cin >> input;
+        auto mod = modulus<int>();
+        auto f = [&](int i){ return mod(input, i) == 0; };
+        auto is_divisible = any_of(iv.begin(), iv.end(), f);
+        cout << (is_divisible ? "YES!" : "NO!") << endl;
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_42::test();
+    Practise_14_43::test();
     
     return 0;
 }
