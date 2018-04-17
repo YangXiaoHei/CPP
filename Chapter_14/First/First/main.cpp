@@ -1176,7 +1176,7 @@ namespace YH3 {
      *  1、cin 定义了重载了 bool 的类型转换运算符
         2、显示的类型转换 -> 防止隐式造成的隐患
         3、转换成 bool 一般定义成 explicit 的，但用在条件中时，还是会发生隐式转换
-        
+     
      */
     class SmallInt {
     public:
@@ -1205,10 +1205,33 @@ namespace YH3 {
     }
 }
 
+namespace Practise_14_45 {
+    class Sales_data {
+    public:
+        Sales_data(const string &s) : Sales_data(s, 0, 0.0) {}
+        Sales_data(const string &s, unsigned u, double d) :
+                bookNo(s), units_sold(u), revenue(d) {}
+        explicit operator string() const { return bookNo; }
+        explicit operator double() const { return revenue; }
+        explicit operator bool() const { return bookNo.length() > 0; }
+    private:
+        string bookNo;
+        unsigned units_sold;
+        double revenue;
+    };
+    void test() {
+        Sales_data s("haha", 10, 3.4);
+        cout << !!s << endl;
+        cout << (double)s << endl;
+        cout << (string)s << endl;
+        cout << static_cast<double>(s) << endl;
+        cout << static_cast<string>(s) << endl;
+    }
+}
 
 int main(int argc, const char * argv[]) {
 
-    YH3::test();
+    Practise_14_45::test();
     
     return 0;
 }
