@@ -287,7 +287,7 @@ namespace Practise_15_07 {
         }
         else
         {
-            return n * price;
+            return nMax * (1 - discount) * price + (n - nMax) * price;
         }
     }
     
@@ -477,8 +477,96 @@ namespace Practise_15_14 {
     }
 }
 
+namespace Practise_15_15 {
+    class Quote
+    {
+    public:
+        Quote() = default;
+        Quote(const string &b, double p) : bookNo(b), price(p) {}
+        
+        virtual const string& isbn() const;
+        virtual double net_price(size_t n) const;
+        
+        virtual ~Quote() = default;
+        
+    protected:
+        double price = 0;
+    private:
+        string bookNo;
+    };
+    
+    class Disc_quote : public Quote
+    {
+    public:
+        Disc_quote() = default;
+        Disc_quote(const string &book, double p, size_t qty, double disc) :
+        Quote(book, p), quantity(qty), discount(disc) {}
+        
+        virtual double net_price(size_t) const = 0;
+        
+    protected:
+        size_t quantity = 0;
+        double discount = 0.0;
+    };
+    
+    class Bulk_quote : public Disc_quote
+    {
+    public:
+        Bulk_quote() = default;
+        Bulk_quote(const string &book, double p, size_t qty, double disc) :
+        Disc_quote(book, p, qty, disc) {}
+        
+        double net_price(size_t) const override;
+    };
+    
+    class Limit_quote : public Disc_quote
+    {
+    public:
+        Limit_quote() = default;
+        Limit_quote(const string &book, double p, size_t qty, double disc) :
+        Disc_quote(book, p, qty, disc) {}
+        
+        double net_price(size_t) const override;
+    };
+    
+    double Bulk_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * price;
+        }
+        else
+        {
+            return n * (1 - discount) * price;
+        }
+    }
+    
+    double Limit_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * (1 - discount) * price;
+        }
+        else
+        {
+            return quantity * (1 - discount) * price + (n - quantity) * price;
+        }
+    }
+    
+    void test()
+    {
+        
+    }
+}
 
-
+namespace Practise_15_16 {
+    void test()
+    {
+        /**
+         *  见 Practise_15_15
+         */
+    }
+}
 
 
 
