@@ -430,6 +430,54 @@ namespace Practise_15_11 {
     }
 }
 
+namespace Practise_15_12 {
+    void test()
+    {
+        /**
+         *  有必要啊，代表该函数是覆盖父类的虚函数，并且不允许被子类继续覆盖
+         */
+    }
+}
+
+namespace Practise_15_13 {
+    class base
+    {
+    public:
+        string name() { return basename; }
+        virtual void print(ostream &os) { os << basename; }
+    private:
+        string basename;
+    };
+    class derived : public base
+    {
+    public:
+        void print(ostream &os) { print(os);  os << " " << i; }
+    private:
+        int i;
+    };
+    void test()
+    {
+        /**
+         *  在派生类的 print 实现中，这里本意想先调用父类实现，但却造成死循环，应该使用作用域运算符限定调用父类方法
+         */
+    }
+}
+
+namespace Practise_15_14 {
+    void test()
+    {
+        /**
+         *  a 父类
+            b 子类
+            c 父类
+            d 子类
+            e 父类
+            f 子类
+         */
+    }
+}
+
+
 
 
 
