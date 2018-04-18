@@ -1370,11 +1370,53 @@ namespace Practise_14_50 {
     }
 }
 
+/**
+ *  没搞懂
+ */
+namespace Practise_14_52 {
+    class SmallInt {
+    public:
+        SmallInt(int i = 0) : val(i) {
+            if (i < 0 || i > 255) {
+                throw out_of_range("Bad smallInt value");
+            }
+        }
+        operator size_t() const { return val; }
+        explicit operator bool() const { return !!val; }
+    private:
+        size_t val;
+    };
+    struct LongDouble {
+        LongDouble(double d = 0.0) {}
+        LongDouble operator+(const SmallInt& s) { return 1; }
+        explicit operator double() { return 0.0; }
+        operator float() { return 0.0; }
+    };
+    void test() {
+        SmallInt si;
+        LongDouble ld;
+        ld = si + ld;
+        ld = ld + si;
+    }
+}
+
+/**
+ *  没搞懂
+ */
+namespace Practise_14_53 {
+    void test() {
+        /**
+         *  SmallInt s1;
+         double d = s1 + 3.14;
+         */
+    }
+}
+
 
 
 int main(int argc, const char * argv[]) {
 
-    Practise_14_50::test();
+    Practise_14_52::test();
     
     return 0;
 }
