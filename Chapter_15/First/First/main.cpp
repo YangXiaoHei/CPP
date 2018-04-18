@@ -154,9 +154,87 @@ namespace YH3 {
     }
 }
 
+namespace Practise_15_04 {
+    void test()
+    {
+        /**
+         *  a, 不对，不能自己派生自己
+            b, 可以
+            c, 不对，声明不能加派生列表
+         */
+    }
+}
+
+namespace Practise_15_05 {
+    class Quote
+    {
+    public:
+        Quote() = default;
+        Quote(const string& b, double p) : bookNo(b), price(p) {}
+        
+        virtual const string& isbn() const;
+        virtual double net_price(size_t n) const;
+        
+        virtual ~Quote() = default;
+    private:
+        string bookNo;
+    protected:
+        double price = 0.0;
+    };
+    
+    class Bulk_Quote : public Quote
+    {
+    public:
+        Bulk_Quote() = default;
+        Bulk_Quote(const string &b, double p, size_t qty, double disc) :
+                    Quote(b, p), min_qty(qty), discount(disc) {}
+        
+        double net_price(size_t n) const override;
+    private:
+        size_t min_qty;
+        double discount = 0.0;
+    };
+    
+    double Quote::net_price(size_t n) const
+    {
+        return n * price;
+    }
+    
+    const string& Quote::isbn() const
+    {
+        return bookNo;
+    }
+    
+    double Bulk_Quote::net_price(size_t n) const
+    {
+        if (n > min_qty)
+        {
+            return n * (1 - discount) * price;
+        }
+        else
+        {
+            return n * price;
+        }
+    }
+    
+    void print_total(Quote &item, size_t n)
+    {
+        cout << item.isbn() << " : " << item.net_price(n) << endl;
+    }
+    
+    void test()
+    {
+        Quote a("C++ Primer", 3);
+        Bulk_Quote b("Algorithms", 3, 5, 0.5);
+        
+        print_total(a, 10);
+        print_total(b, 10);
+    }
+}
+
 
 
 int main(int argc, const char * argv[]) {
-    YH::test();
+    Practise_15_05::test();
     return 0;
 }
