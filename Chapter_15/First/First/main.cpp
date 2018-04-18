@@ -117,6 +117,43 @@ namespace Practise_15_03 {
     };
 }
 
+namespace YH2 {
+    using Practise_15_03::Quote;
+    class Bulk_Quote : public Quote
+    {
+    public:
+        Bulk_Quote() = default;
+        Bulk_Quote(const string&, double, size_t, double);
+        double net_price(size_t) const override;
+    private:
+        size_t min_qty = 0;
+        double discount = 0.0;
+    };
+    void test()
+    {
+        
+    }
+}
+
+namespace YH3 {
+    void test()
+    {
+        /**
+         *  派生类和基类分别控制自己的构造过程
+         
+            派生类可以在自己的初始化列表中调用父类构造函数
+         
+         静态成员
+             Father::staticMem()
+             Child::staticMem()
+             ChildObj.staticMem()
+             staticMem()  通过 this 访问
+         
+          final 防止继承发生
+         */
+    }
+}
+
 
 
 int main(int argc, const char * argv[]) {
