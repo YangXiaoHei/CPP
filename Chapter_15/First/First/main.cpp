@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <string>
+#include <istream>
+#include <fstream>
 
 using namespace std;
 
@@ -176,6 +178,7 @@ namespace Practise_15_05 {
         virtual double net_price(size_t n) const;
         
         virtual void show(size_t n) const;
+        virtual ostream& debug() const;
         
         virtual ~Quote() = default;
     private:
@@ -192,6 +195,9 @@ namespace Practise_15_05 {
                     Quote(b, p), min_qty(qty), discount(disc) {}
         
         double net_price(size_t n) const override;
+        
+        ostream& debug() const override;
+        
     private:
         size_t min_qty;
         double discount = 0.0;
@@ -222,6 +228,17 @@ namespace Practise_15_05 {
         {
             return n * price;
         }
+    }
+    
+    ostream& Quote::debug() const
+    {
+        return cout << bookNo << " ";
+    }
+    
+    ostream& Bulk_Quote::debug() const
+    {
+        return Quote::debug() << price << " "
+                              << min_qty << " " << discount;
     }
     
     
@@ -283,8 +300,143 @@ namespace Practise_15_07 {
 }
 
 
+namespace Practise_15_08 {
+    void test()
+    {
+        /**
+         *  静态类型 ： 在编译期决定的类型
+            动态类型 ： 在运行时决定的类型
+         */
+    }
+}
+
+namespace Practise_15_09 {
+    struct Programmer {};
+    struct Cpp : public Programmer {};
+    struct iOS : public Programmer {};
+    
+    void test1(Programmer& p)
+    {
+        
+    }
+    void test2()
+    {
+        Cpp cpp;
+        Programmer *p = &cpp;
+    }
+    void test()
+    {
+        iOS ios;
+        test1(ios);
+    }
+}
+
+namespace Practise_15_10 {
+    void test()
+    {
+        /**
+         *  input 是一个 ifstream 对象，而 ifstream 继承自 istream
+            read 接受一个  istream& 对象，因此发生了动态绑定，调用了 input 的具体实现
+         */
+    }
+}
+
+/**
+ *  Override
+ */
+namespace YH4 {
+    struct A
+    {
+        virtual void f1(int) const;
+        virtual void f2();
+        void f3();
+    };
+    struct B : public A
+    {
+        void f1(int) const override {}
+//        void f2(int) override {}
+//        void f3() override {}
+//        void f4() override {}
+    };
+    void test()
+    {
+        
+    }
+}
+
+/**
+ *  Final
+ */
+namespace YH5 {
+    struct A
+    {
+        virtual void f2();
+        virtual void f1(int) const final;
+    };
+    struct B : public A
+    {
+        void f2() {}
+//        void f1(int) const {}
+    };
+    void test()
+    {
+        
+    }
+}
+
+/**
+ *  回避虚函数机制
+ */
+namespace YH6 {
+    struct A
+    {
+        virtual void f() const {
+            cout << "初始化" << endl;
+        }
+    };
+    struct B : public A
+    {
+        void f() const
+        {
+            // 使用作用域运算符指定调用方法的版本
+            A::f();
+            cout << "hello world" << endl;
+        }
+    };
+    void test1(const A &a)
+    {
+        a.f();
+    }
+    void test()
+    {
+        B b;
+        test1(b);
+    }
+}
+
+
+namespace Practise_15_11 {
+    using namespace Practise_15_07;
+    void test1(Quote& q)
+    {
+        q.debug() << endl;
+    }
+    void test()
+    {
+        Bulk_Quote bq("C++ Primer", 3, 10, 0.8);
+        Limit_Quote lq("Algorithms", 4, 5, 0.7);
+        test1(bq);
+        test1(lq);
+    }
+}
+
+
+
+
+
+
 
 int main(int argc, const char * argv[]) {
-    Practise_15_07::test();
+    Practise_15_11::test();
     return 0;
 }
