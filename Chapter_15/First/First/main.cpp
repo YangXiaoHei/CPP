@@ -568,6 +568,17 @@ namespace Practise_15_16 {
     }
 }
 
+namespace Practise_15_17 {
+    void test()
+    {
+        using namespace Practise_15_15;
+        
+//        Disc_quote dis;
+    }
+}
+
+
+
 
 
 
