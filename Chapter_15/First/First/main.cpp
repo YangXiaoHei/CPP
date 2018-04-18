@@ -175,6 +175,8 @@ namespace Practise_15_05 {
         virtual const string& isbn() const;
         virtual double net_price(size_t n) const;
         
+        virtual void show(size_t n) const;
+        
         virtual ~Quote() = default;
     private:
         string bookNo;
@@ -194,6 +196,11 @@ namespace Practise_15_05 {
         size_t min_qty;
         double discount = 0.0;
     };
+    
+    void Quote::show(size_t n) const
+    {
+        cout << isbn() << " : " << n << " 本 " << net_price(n) << " 元" << endl;
+    }
     
     double Quote::net_price(size_t n) const
     {
@@ -217,24 +224,67 @@ namespace Practise_15_05 {
         }
     }
     
-    void print_total(Quote &item, size_t n)
-    {
-        cout << item.isbn() << " : " << item.net_price(n) << endl;
-    }
     
     void test()
     {
         Quote a("C++ Primer", 3);
         Bulk_Quote b("Algorithms", 3, 5, 0.5);
         
-        print_total(a, 10);
-        print_total(b, 10);
+        a.show(10);
+        b.show(10);
+    }
+}
+
+namespace Practise_15_06 {
+    void test()
+    {
+        /**
+         *  见 Practise_15_05
+         */
+    }
+}
+
+namespace Practise_15_07 {
+    using Practise_15_05::Quote;
+    using Practise_15_05::Bulk_Quote;
+    
+    class Limit_Quote : public Quote
+    {
+    public:
+        Limit_Quote() = default;
+        Limit_Quote(const string& b, double p, size_t max, double disc) :
+        Quote(b, p), nMax(max), discount(disc) {}
+        
+        double net_price(size_t n) const override;
+        
+    private:
+        size_t nMax = 0;
+        double discount = 0.0;
+    };
+    
+    double Limit_Quote::net_price(size_t n) const
+    {
+        if (n < nMax)
+        {
+            return n * (1 - discount) * price;
+        }
+        else
+        {
+            return n * price;
+        }
+    }
+    
+    void test()
+    {
+        Limit_Quote a("C++ Primer", 3, 10, 0.5);
+        a.show(10);
+        a.show(9);
     }
 }
 
 
 
 int main(int argc, const char * argv[]) {
-    Practise_15_05::test();
+    Practise_15_07::test();
     return 0;
 }
