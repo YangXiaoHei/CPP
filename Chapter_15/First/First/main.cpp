@@ -577,6 +577,39 @@ namespace Practise_15_17 {
     }
 }
 
+namespace Practise_15_18 {
+    class Base
+    {
+    protected:
+        int prot_mem;
+    };
+    class Sneaky : public Base
+    {
+        friend void clobber(Sneaky &);
+        friend void clobber(Base &);
+        int j;
+    };
+    
+    /**
+     *  派生类的成员或友元只能通过派生类对象来访问基类的受保护成员。
+     */
+    void clobber(Sneaky &s)
+    {
+        s.j = s.prot_mem = 0;
+    }
+    
+    void clobber(Base &b)
+    {
+//        b.prot_mem = 0; ❌
+    }
+    
+    void test()
+    {
+        
+    }
+}
+
+
 
 
 
