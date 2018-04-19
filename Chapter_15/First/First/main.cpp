@@ -529,6 +529,16 @@ namespace Practise_15_15 {
         double net_price(size_t) const override;
     };
     
+    const string& Quote::isbn() const
+    {
+        return bookNo;
+    }
+    
+    double Quote::net_price(size_t n) const
+    {
+        return n * price;
+    }
+    
     double Bulk_quote::net_price(size_t n) const
     {
         if (n < quantity)
@@ -613,7 +623,7 @@ namespace Practise_15_19 {
     class Base
     {
     public:
-        void pub_mem();
+        void pub_mem() {};
     protected:
         int prot_mem;
     private:
@@ -634,6 +644,16 @@ namespace Practise_15_19 {
             return prot_mem;
         }
     };
+    
+    struct Derived_from_Public : public Pub_Derv
+    {
+        int use_base() { return prot_mem; }
+    };
+    struct Derived_from_Private : public Priv_Derv
+    {
+//        int use_base() { return prot_mem; } // ❌
+    };
+    
     void test()
     {
         Pub_Derv d1;
