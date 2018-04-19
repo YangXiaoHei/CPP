@@ -609,7 +609,39 @@ namespace Practise_15_18 {
     }
 }
 
-
+namespace Practise_15_19 {
+    class Base
+    {
+    public:
+        void pub_mem();
+    protected:
+        int prot_mem;
+    private:
+        char priv_mem;
+    };
+    struct Pub_Derv : public Base
+    {
+        int f() { return prot_mem; }
+        
+//        char g() { return priv_mem; } //❌
+    };
+    struct Priv_Derv : private Base
+    {
+        int f1() const
+        {
+            // private 不影响派生类的访问权限
+            // 派生访问说明符的目的是控制派生类用户（包括派生类的派生类在内）对于基类成员的访问权限
+            return prot_mem;
+        }
+    };
+    void test()
+    {
+        Pub_Derv d1;
+        Priv_Derv d2;
+        d1.pub_mem();
+//        d2.pub_mem(); // ❌
+    }
+}
 
 
 
