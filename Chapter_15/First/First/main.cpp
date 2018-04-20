@@ -10,6 +10,7 @@
 #include <string>
 #include <istream>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 
@@ -922,6 +923,104 @@ namespace Practise_15_20 {
     }
 }
 
+namespace Practise_15_21 {
+    class Graph
+    {
+        
+    };
+    class Rectangle : public Graph
+    {
+        
+    };
+    class Circle : public Graph
+    {
+        
+    };
+    class Triangle : public Graph
+    {
+        
+    };
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_15_22 {
+    class Graph
+    {
+    public:
+        Graph(const string& n) : shape_name(n) {}
+        virtual double area() const = 0;
+        virtual double perimeter() const = 0;
+        virtual const string& name() const;
+    private:
+        string shape_name;
+    };
+    class Rectangle : public Graph
+    {
+    public:
+        Rectangle(const string& n, double w, double h) : Graph(n), w_(w), h_(h) {}
+        double area() const override;
+        double perimeter() const override;
+    private:
+        double w_;
+        double h_;
+    };
+    double Rectangle::area() const
+    {
+        return w_ * h_;
+    }
+    double Rectangle::perimeter() const
+    {
+        return (w_ + h_) * 2;
+    }
+    
+    class Circle : public Graph
+    {
+    public:
+        Circle(const string& n, double r) : Graph(n), radius_(r) {}
+        double area() const override;
+        double perimeter() const override;
+    protected:
+        static double PI;
+    private:
+        double radius_;
+    };
+    double Circle::PI = 3.1415926;
+    double Circle::area() const
+    {
+        return PI * radius_ * radius_;
+    }
+    double Circle::perimeter() const
+    {
+        return 2 * PI * radius_;
+    }
+    
+    class RightTriangle : public Graph
+    {
+    public:
+        RightTriangle(const string& n, double l1, double l2) : Graph(n), l1_(l1), l2_(l2) {}
+        double area() const override;
+        double perimeter() const override;
+    private:
+        double l1_;
+        double l2_;
+    };
+    double RightTriangle::area() const
+    {
+        return l1_ * l2_ * 0.5;
+    }
+    double RightTriangle::perimeter() const
+    {
+        return l1_ + l2_ + sqrt(l1_ * l1_ + l2_ * l2_);
+    }
+    
+    void test()
+    {
+        
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
