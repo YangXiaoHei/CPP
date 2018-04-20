@@ -663,9 +663,119 @@ namespace Practise_15_19 {
     }
 }
 
+namespace YH7 {
+    struct A
+    {
+        
+    };
+    struct B : public A
+    {
+        
+    };
+    struct C : private A
+    {
+        
+    };
+    void test()
+    {
+        B b; C c;
+        A *pa = &b;
+//        pa = &c;  私有继承，不能向基类转换  // ❌
+    }
+}
 
+namespace YH8 {
+    /**
+     *  不论 D 以什么方式继承 B，D 的成员函数和友元都能使用派生类向基类的转换
+        派生类向基类的类型转换对于派生类的成员和友元来说永远是可访问的
+     */
+    struct A
+    {
+        
+    };
+    class Friend
+    {
+        void f0();
+    };
+    struct B : private A
+    {
+        friend class Friend;
+        friend void f1();
+        void f2();
+    };
+    
+    //友元类
+    void Friend::f0()
+    {
+        B b;
+        A *pa = &b;
+    }
+    
+    // 友元函数
+     void f1()
+    {
+        B b;
+        A *pa = &b;
+    }
+    
+    // 成员函数
+    void B::f2()
+    {
+        B b;
+        A *pa = &b;
+    }
+    
+    void test()
+    {
+        
+    }
+}
 
-
+namespace YH9 {
+    struct A
+    {
+        
+    };
+    class Friend
+    {
+        void f0();
+    };
+    struct B : private A
+    {
+        
+    };
+    struct C : public B
+    {
+        friend class Friend;
+        friend void f1();
+        void f2();
+    };
+    
+    //友元类
+    void Friend::f0()
+    {
+        B b;
+//        A *pa = &b; // ❌
+    }
+    
+    // 友元函数
+    void f1()
+    {
+        B b;
+//        A *pa = &b;  // ❌
+    }
+    
+    // 成员函数
+    void C::f2()
+    {
+        B b;
+//        A *pa = &b; // ❌
+    }
+    void test()
+    {
+        
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
