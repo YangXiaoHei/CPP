@@ -587,7 +587,7 @@ namespace Practise_15_17 {
     }
 }
 
-namespace Practise_15_18 {
+namespace XXX {
     class Base
     {
     protected:
@@ -619,7 +619,7 @@ namespace Practise_15_18 {
     }
 }
 
-namespace Practise_15_19 {
+namespace XXX1 {
     class Base
     {
     public:
@@ -685,6 +685,10 @@ namespace YH7 {
 }
 
 namespace YH8 {
+    class Friend
+    {
+        void f0();
+    };
     /**
      *  不论 D 以什么方式继承 B，D 的成员函数和友元都能使用派生类向基类的转换
         派生类向基类的类型转换对于派生类的成员和友元来说永远是可访问的
@@ -692,10 +696,6 @@ namespace YH8 {
     struct A
     {
         
-    };
-    class Friend
-    {
-        void f0();
     };
     struct B : private A
     {
@@ -773,9 +773,155 @@ namespace YH9 {
     }
     void test()
     {
+        C c;
+        B *p = &c;
+    }
+}
+
+namespace YH10 {
+    class Base
+    {
+        friend class Pal;
+    public:
+        void pub_mem() {};
+    protected:
+        int prot_mem;
+    private:
+        char priv_mem;
+    };
+    class Sneaky : public Base
+    {
+        friend void clobber(Sneaky&);
+        friend void clobber(Base&);
+        int j;
+    };
+    class Pal
+    {
+    public:
+        int f(Base b) { return b.prot_mem; }
+//        int f2(Sneaky s) { return s.j; } //❌ Pal 不是 Sneaky 的友元
+        int f3(Sneaky s) { return s.prot_mem; } // 正确 Pal 是 Base 的友元
+    };
+    class D2 : public Pal
+    {
+    public:
+        int mem(Base b)
+        {
+//            return b.prot_mem;  // ❌ 友元关系不能继承
+            return 1;
+        }
+    };
+    void test()
+    {
         
     }
 }
+
+/**
+ *  改变个别成员的可访问性
+ */
+namespace YH11 {
+    class Base
+    {
+    public:
+        size_t size() const { return n; }
+    protected:
+        size_t n;
+    };
+    class Derived : private Base
+    {
+    public:
+        using Base::size;
+    protected:
+        using Base::n;
+    };
+    void test()
+    {
+        Derived d;
+        cout << d.size() << endl;
+    }
+}
+
+/**
+ *  默认的继承保护级别
+ */
+namespace YH12  {
+    class Base {};
+    struct D1 : Base {}; // 默认公有继承
+    class D2 : Base {};  // 默认私有继承
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_15_18 {
+    class Base {};
+    
+    class Pub_Derv : public Base {};
+    class Pro_Derv : protected Base {};
+    class Pri_Derv : private Base {};
+    
+    class Dervied_from_Public : public Pub_Derv {};
+    class Dervied_from_Protected : protected Pro_Derv {};
+    class Dervied_from_Private : private Pri_Derv {};
+    void test()
+    {
+        Pub_Derv d1;
+        Pri_Derv d2;
+        Pro_Derv d3;
+        Dervied_from_Public dd1;
+        Dervied_from_Private dd2;
+        Dervied_from_Protected dd3;
+        
+          Base *p = &d1;   // 不管如何继承,派生类都能访问基类的公有成员，所以能转成基类指针
+//                p = &d2;   // ❌
+//                p = &d3;   // ❌
+                p = &dd1;
+//                p = &dd2;  // ❌
+//                p = &dd3;  // ❌
+        
+    }
+}
+
+namespace Practise_15_19 {
+    class Base
+    {
+    };
+    class Pub_Derv : public Base {
+        void memfcn(Base &b) { b = *this; }
+    };
+    class Pro_Derv : protected Base {
+        void memfcn(Base &b) { b = *this; }
+    };
+    class Pri_Derv : private Base {
+        void memfcn(Base &b) { b = *this; }
+    };
+    class Dervied_from_Public : public Pub_Derv {
+        void memfcn(Base &b) { b = *this; }
+    };
+    class Dervied_from_Protected : protected Pro_Derv {
+        void memfcn(Base &b) { b = *this; }
+    };
+    class Dervied_from_Private : private Pri_Derv {
+//        void memfcn(Base &b) { b = *this; }  // ❌
+    };
+    
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_15_20 {
+    void test()
+    {
+        /**
+         *  见 Practise_15_19、18
+         */
+    }
+}
+
 
 
 int main(int argc, const char * argv[]) {
