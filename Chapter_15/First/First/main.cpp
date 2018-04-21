@@ -1154,8 +1154,99 @@ namespace Practise_15_25 {
     }
 }
 
+namespace Practise_15_26 {
+    class Quote
+    {
+    public:
+        Quote() { cout << "Quote 默认构造" << endl; }
+        Quote(const string& b, double p) : bookNo(b), price(p) { cout << "Quote 参数构造" << endl;}
+        
+        virtual const string& isbn() const;
+        virtual double net_price(size_t n) const;
+        
+        virtual ~Quote() { cout << "Quote 析构" << endl; }
+    protected:
+        double price;
+    private:
+        string bookNo;
+    };
+    const string& Quote::isbn() const
+    {
+        return bookNo;
+    }
+    double Quote::net_price(size_t n) const
+    {
+        return n * price;
+    }
+    
+    
+    class Disc_quote : public Quote
+    {
+    public:
+        Disc_quote() { cout << "Disc_quote 默认构造" << endl; }
+        Disc_quote(const string& b, double p, size_t qty, double disc) : Quote(b, p), quantity(qty), discount(disc) { cout << "Disc_quote 参数构造" << endl; }
+        
+        virtual double net_price(size_t n) const = 0;
+        
+        ~Disc_quote() { cout << "Disc_quote 析构" << endl; }
+    protected:
+        size_t quantity;
+        double discount;
+    };
+    
+    class Bulk_quote : public Disc_quote
+    {
+    public:
+        Bulk_quote() { cout << "Bulk_quote 默认构造" << endl; }
+        Bulk_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Bulk_quote 参数构造" << endl; }
+        
+        double net_price(size_t n) const override;
+        
+        ~Bulk_quote() { cout << "Bulk_quote 析构" << endl; }
+    };
+    double Bulk_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * price;
+        }
+        else
+        {
+            return quantity * price + (n - quantity) * (1 - discount) * price;
+        }
+    }
+    
+    class Limit_quote : public Disc_quote
+    {
+    public:
+        Limit_quote() { cout << "Limit_quote 默认构造" << endl; }
+        Limit_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Limit_quote 参数构造" << endl; }
+        
+        double net_price(size_t n) const override;
+        
+        ~Limit_quote() { cout << "Limit_quote 析构" << endl; }
+    };
+    double Limit_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * (1 - discount) * price;
+        }
+        else
+        {
+            return quantity * (1 - discount) * price + (n - quantity) * price;
+        }
+    }
+    
+    void test()
+    {
+        Bulk_quote b("C++Primer", 10.3, 5, 0.5);
+        Limit_quote l("Algorithms4", 20.4, 8, 0.75);
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
-    YH13::test();
+    Practise_15_26::test();
     return 0;
 }
