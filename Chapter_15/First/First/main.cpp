@@ -11,6 +11,7 @@
 #include <istream>
 #include <fstream>
 #include <math.h>
+#include <vector>
 
 using namespace std;
 
@@ -1197,8 +1198,9 @@ namespace Practise_15_26 {
     class Bulk_quote : public Disc_quote
     {
     public:
-        Bulk_quote() { cout << "Bulk_quote 默认构造" << endl; }
-        Bulk_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Bulk_quote 参数构造" << endl; }
+        using Disc_quote::Disc_quote;
+//        Bulk_quote() { cout << "Bulk_quote 默认构造" << endl; }
+//        Bulk_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Bulk_quote 参数构造" << endl; }
         
         double net_price(size_t n) const override;
         
@@ -1219,8 +1221,9 @@ namespace Practise_15_26 {
     class Limit_quote : public Disc_quote
     {
     public:
-        Limit_quote() { cout << "Limit_quote 默认构造" << endl; }
-        Limit_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Limit_quote 参数构造" << endl; }
+//        Limit_quote() { cout << "Limit_quote 默认构造" << endl; }
+//        Limit_quote(const string& b, double p, size_t n, double d) : Disc_quote(b, p, n, d) { cout << "Limit_quote 参数构造" << endl; }
+        using Disc_quote::Disc_quote;
         
         double net_price(size_t n) const override;
         
@@ -1240,13 +1243,122 @@ namespace Practise_15_26 {
     
     void test()
     {
+//        Bulk_quote b;
+//        Limit_quote l;
         Bulk_quote b("C++Primer", 10.3, 5, 0.5);
         Limit_quote l("Algorithms4", 20.4, 8, 0.75);
     }
 }
 
+namespace YH17 {
+    class A
+    {
+    public:
+        A() { cout << " A" << endl; }
+    };
+    class B : public A
+    {
+        
+    };
+    void test()
+    {
+        B b;
+    }
+}
+
+namespace Practise_15_27 {
+    void test()
+    {
+        /**
+         *  见Practise_15_26
+         */
+    }
+}
+
+namespace Practise_15_28 {
+    class Quote
+    {
+    public:
+        Quote() = default;
+        Quote(const string& b, double p) : bookNo(b), price(p) {}
+        
+        virtual const string& isbn() const;
+        virtual double net_price(size_t n) const;
+        
+        virtual ~Quote() = default;
+    protected:
+        double price;
+    private:
+        string bookNo;
+    };
+    const string& Quote::isbn() const
+    {
+        return bookNo;
+    }
+    double Quote::net_price(size_t n) const
+    {
+        return n * price;
+    }
+    
+    
+    class Disc_quote : public Quote
+    {
+    public:
+        Disc_quote() {}
+        Disc_quote(const string& b, double p, size_t qty, double disc) : Quote(b, p), quantity(qty), discount(disc) {}
+        
+        virtual double net_price(size_t n) const = 0;
+    protected:
+        size_t quantity;
+        double discount;
+    };
+    
+    class Bulk_quote : public Disc_quote
+    {
+    public:
+        using Disc_quote::Disc_quote;
+        double net_price(size_t n) const override;
+    };
+    double Bulk_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * price;
+        }
+        else
+        {
+            return quantity * price + (n - quantity) * (1 - discount) * price;
+        }
+    }
+    
+    class Limit_quote : public Disc_quote
+    {
+    public:
+        using Disc_quote::Disc_quote;
+        double net_price(size_t n) const override;
+    };
+    double Limit_quote::net_price(size_t n) const
+    {
+        if (n < quantity)
+        {
+            return n * (1 - discount) * price;
+        }
+        else
+        {
+            return quantity * (1 - discount) * price + (n - quantity) * price;
+        }
+    }
+    void test()
+    {
+        vector<Quote> v;
+        Bulk_quote b("C++ Primer", 10, 5, 0.75);
+        v.push_back(b);
+        cout << v.back().net_price(10) << endl;
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
-    Practise_15_26::test();
+    Practise_15_28::test();
     return 0;
 }
