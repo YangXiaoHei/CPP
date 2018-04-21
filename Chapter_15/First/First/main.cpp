@@ -1350,10 +1350,26 @@ namespace Practise_15_28 {
     }
     void test()
     {
-        vector<Quote> v;
-        Bulk_quote b("C++ Primer", 10, 5, 0.75);
-        v.push_back(b);
-        cout << v.back().net_price(10) << endl;
+//        vector<Quote> v;
+//        Bulk_quote b("C++ Primer", 10, 5, 0.75);
+//        v.push_back(p);
+//        cout << v.back().net_price(10) << endl;
+        
+        /**
+         *  因为调用了虚函数
+         */
+        vector<shared_ptr<Quote>> v;
+        v.push_back(make_shared<Bulk_quote>("C++ Primer", 10, 5, 0.75));
+        cout << v.back()->net_price(10) << endl;
+    }
+}
+
+namespace Practise_15_29 {
+    void test()
+    {
+        /**
+         *  见 Practise_15_28
+         */
     }
 }
 
