@@ -136,9 +136,164 @@ namespace Practise_16_05 {
     }
 }
 
+namespace Practise_16_06 {
+    template <typename T>
+    T *begin(T (&a)[])
+    {
+        return a;
+    }
+    template <typename T, size_t N>
+    T *end(T (&a)[N])
+    {
+        return a + N;
+    }
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_16_07 {
+    template <typename T, size_t N>
+    constexpr size_t size_of_array(const T (&a)[N])  /* 必须加 const 才能传递 { 1, 2, 3 } */
+    {
+        return N;
+    }
+    void test()
+    {
+        cout << size_of_array({1, 2, 3, 4}) << endl;
+        string a[] = { "yanghan", "lijie" };
+        cout << size_of_array(a) << endl;
+    }
+}
+
+typedef int HAHA;
+
+namespace Practise_16_08 {
+    void test()
+    {
+        HAHA a;
+        
+        /**
+         * 只有 string 和 vector 等一些标准库类型有下标运算符，而并非全部如此
+            与之类似，所有标准库容器的迭代器都定义了 == 和 !=，但是它们中的大多数都没有定义 < 运算符
+            因此，只要养成使用迭代器和 != 的习惯，就不用太在意用的到底是哪种容器类型
+         */
+    }
+}
+
+namespace YH3 {
+    template <typename T>
+    class Blob
+    {
+    public:
+        typedef T value_type;
+        typedef typename vector<T>::size_type size_type;
+        Blob();
+        Blob(initializer_list<T> il);
+        size_type size() const { return data->size(); }
+        bool empty() const { return data->empty(); }
+        void push_back(const T &t) { data->push_back(t); }
+        void push_back(T &&t) { data->push_back(std::move(t)); }
+        void pop_back();
+        T& back();
+        T& operator[](size_type i);
+    private:
+        shared_ptr<vector<T>> data;
+        void check(size_type i, const string &msg) const;
+    };
+    template <typename T>
+    void Blob<T>::check(size_type i, const string &msg) const
+    {
+        if (i >= data->size()) {
+            throw out_of_range(msg);
+        }
+    }
+    template <typename T>
+    T& Blob<T>::back()
+    {
+        check(0, "back on empty Blob");
+        return data->back();
+    }
+    template <typename T>
+    T& Blob<T>::operator[](size_type i)
+    {
+        check(i, "subscript out of range");
+        return (*data)[i];
+    }
+    template <typename T>
+    void Blob<T>::pop_back()
+    {
+        check(0, "pop_back on empty Blob");
+        data->pop_back();
+    }
+    
+    template <typename T>
+    Blob<T>::Blob() : data(make_shared<vector<T>>()) {}
+    
+    template <typename T>
+    Blob<T>::Blob(initializer_list<T> il) : data(make_shared<vector<T>>(il)) {}
+    
+    template <typename T>
+    class BlobPtr
+    {
+    public:
+        BlobPtr() : curr(0) {}
+        BlobPtr(BlobPtr<T> &a, size_t sz = 0) : wptr(a.data), curr(sz) {}
+        T& operator*() const
+        {
+            auto p = check(curr, "deference past end");
+            return (*p)[curr];
+        }
+        BlobPtr& operator++();
+        BlobPtr& operator--();
+        
+        BlobPtr operator++(int);
+        BlobPtr operator--(int);
+    private:
+        shared_ptr<vector<T>> check(size_t, const string&) const;
+        weak_ptr<vector<T>> wptr;
+        size_t curr;
+    };
+    
+    template <typename T>
+    BlobPtr<T> BlobPtr<T>::operator++(int)
+    {
+        BlobPtr ret = *this;
+        ++*this;
+        return ret;
+    }
+    template <typename T>
+    BlobPtr<T> BlobPtr<T>::operator--(int)
+    {
+        BlobPtr ret = *this;
+        --*this;
+        return ret;
+    }
+    template <typename T>
+    BlobPtr<T>& BlobPtr<T>::operator++()
+    {
+        check(curr, "out of range");
+        ++curr;
+        return *this;
+    }
+    template <typename T>
+    BlobPtr<T>& BlobPtr<T>::operator--()
+    {
+        --curr;
+        check(curr, "out of range");
+        return *this;
+    }
+    
+    void test()
+    {
+        
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
-    Practise_16_05::test();
+    Practise_16_07::test();
     
     return 0;
 }
