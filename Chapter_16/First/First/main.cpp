@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 
 using namespace std;
 
@@ -96,9 +97,48 @@ namespace Practise_16_03 {
     }
 }
 
+namespace Practise_16_04 {
+    template <typename IteratorType, typename ValueType>
+    IteratorType yh_find(IteratorType begin, IteratorType end, ValueType key)
+    {
+        for (IteratorType b = begin; b != end; ++b) {
+            if (key == *b) {
+                return b;
+            }
+        }
+        return end;
+    }
+    void test()
+    {
+        vector<int> v1{1, 2, 3, 4, 5, 6, 7, 8};
+        list<string> l1{ "yanghan", "lijie", "zhangyafang", "chenyanyu" };
+        
+        cout << *yh_find(v1.begin(), v1.end(), 4) << endl;
+        cout << *yh_find(l1.begin(), l1.end(), "lijie") << endl;
+    }
+}
+
+namespace Practise_16_05 {
+    template <typename T, size_t N>
+    void yh_print(const T (&p)[N])
+    {
+        for (size_t i = 0; i < N; ++i) {
+            cout << p[i] << endl;
+        }
+    }
+    void test()
+    {
+        yh_print({1, 2, 3, 4, 5, 6});
+        double a[] = {4.8, 5.9};
+        string b[] = { "yanghan", "lijie" };
+        yh_print(a);
+        yh_print(b);
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
-    Practise_16_03::test();
+    Practise_16_05::test();
     
     return 0;
 }
