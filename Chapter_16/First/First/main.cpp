@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <map>
 
 using namespace std;
 
@@ -183,9 +184,18 @@ namespace Practise_16_08 {
 }
 
 namespace YH3 {
+    
+    template <typename> class BlobPtr;
+    template <typename> class Blob;
+    
+    /**
+     *  Blob
+     */
     template <typename T>
     class Blob
     {
+        friend class BlobPtr<T>;
+        
     public:
         typedef T value_type;
         typedef typename vector<T>::size_type size_type;
@@ -202,6 +212,13 @@ namespace YH3 {
         shared_ptr<vector<T>> data;
         void check(size_type i, const string &msg) const;
     };
+    
+    template <typename T>
+    bool operator==(const Blob<T> &a, const Blob<T> &b)
+    {
+        return a.data == b.data;
+    }
+    
     template <typename T>
     void Blob<T>::check(size_type i, const string &msg) const
     {
@@ -234,6 +251,11 @@ namespace YH3 {
     template <typename T>
     Blob<T>::Blob(initializer_list<T> il) : data(make_shared<vector<T>>(il)) {}
     
+    
+    
+    /**
+     *  BlobPtr
+     */
     template <typename T>
     class BlobPtr
     {
@@ -284,6 +306,39 @@ namespace YH3 {
         check(curr, "out of range");
         return *this;
     }
+    void test()
+    {
+        Blob<int> b = {1, 2, 3};
+        Blob<int> c = {3, 4, 5};
+    }
+}
+
+namespace YH4 {
+    
+    // 前置声明，在将模版的一个特定实例声明位友元时要用到
+    template <typename T> class Pal;
+    
+    // 普通非模版类
+    class C
+    {
+        friend class Pal<C>; // 用类 C 实例化的 Pal 是 C 的一个友元
+        
+        // Pal2 的所有实例都是 C 的友元，这种情况无需前置声明
+        template <typename T> friend class Pal2;
+    };
+    
+    template <typename T>
+    class C2
+    {
+        // C2 的每个实例都将相同实例化的 Pal 声明作为友元
+        friend class Pal<T>;
+        
+        // Pal2 的所有实例都是 C2 的每个实例的友元，不需要前置声明
+        template <typename X> friend class Pal2;
+        
+        // Pal3 是一个非模版类，它是 C2 所有实例的友元
+        friend class Pal3;  // 不需要 Pal3 的前置声明
+    };
     
     void test()
     {
@@ -291,9 +346,35 @@ namespace YH3 {
     }
 }
 
+namespace YH5 {
+    /**
+     *  模版类型别名
+     */
+    template <typename T>
+    class A {};
+    template <typename T> using twin = pair<T,T>;
+    template <typename T> using partNo = pair<T, unsigned>;
+    void test()
+    {
+        typedef A<string> strA;
+        twin<int> win_loss; // win_loss 是一个 pair<int, int>
+        
+        
+        
+        
+    }
+}
+
+
+
+
+
+
+
+
 int main(int argc, const char * argv[]) {
     
-    Practise_16_07::test();
+    YH3::test();
     
     return 0;
 }
