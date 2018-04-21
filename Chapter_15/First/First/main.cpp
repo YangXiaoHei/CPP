@@ -957,6 +957,11 @@ namespace Practise_15_22 {
     private:
         string shape_name;
     };
+    const string& Graph::name() const
+    {
+        return shape_name;
+    }
+    
     class Rectangle : public Graph
     {
     public:
@@ -1022,8 +1027,103 @@ namespace Practise_15_22 {
     }
 }
 
+namespace YH13 {
+    struct Base
+    {
+        Base() : mem(0) {}
+    protected:
+        int mem;
+    };
+    /**
+     *  如果派生类重用基类中的名字，那么会隐藏基类的
+     */
+    struct Derived : Base
+    {
+        Derived(int i) : mem(i) {}
+        int get_mem() { return mem; }
+        
+        int get_base_mem() { return Base::mem; }
+    protected:
+        int mem;
+    };
+    void test()
+    {
+        Derived d(42);
+        cout << d.get_mem() << endl;
+    }
+}
+
+namespace YH14 {
+    struct Base
+    {
+        int memfcn() { return 1; };
+    };
+    struct Derived : Base
+    {
+        int memfcn(int i) { return 1; }
+    };
+    void test()
+    {
+        Derived d; Base b;
+        b.memfcn();
+        d.memfcn(10);
+//        d.memfcn();  // 基类中的 memfcn() 被隐藏了
+        d.Base::memfcn();
+    }
+}
+
+namespace YH15 {
+    class Base
+    {
+    public:
+        virtual int fcn();
+    };
+    class D1 : public Base
+    {
+    public:
+        int fcn(int);
+        virtual void f2();
+    };
+    class D2 : public D1
+    {
+    public:
+        int fcn(int i) { return 1; }
+        int fcn() { return 1; }
+        void f2() {}
+    };
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_15_23 {
+    class Base
+    {
+    public:
+        virtual int fcn() { cout << "Base::fcn()" << endl; return 1; }
+    };
+    class D1 : public Base
+    {
+    public:
+        int fcn() { cout << "D1::fcn()" << endl; return 1; }
+        virtual void f2() { cout << "D1::f2()" << endl; }
+    };
+    class D2 : public D1
+    {
+    public:
+        int fcn(int i) { cout << "D2:fcn(int)" << endl; return 1; }
+        int fcn() { cout << "D2::fcn()" << endl;  return 1; }
+        void f2() { cout << "D2::f2()" << endl; }
+    };
+    void test()
+    {
+        
+    }
+}
+
 
 int main(int argc, const char * argv[]) {
-    Practise_15_11::test();
+    YH13::test();
     return 0;
 }
