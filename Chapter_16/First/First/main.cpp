@@ -950,6 +950,49 @@ namespace Practise_16_16 {
     }
 }
 
+namespace YH6 {
+    template <typename T, typename F = less<T>>
+    int compare(const T &v1, const T &v2, F f = F())
+    {
+        if (f(v1, v2)) return -1;
+        if (f(v2, v1)) return 1;
+        return 0;
+    }
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_16_17 {
+    
+    void test()
+    {
+        /**
+         *  当我们想让编译器知道，当前使用的名字是一个类型时，就必须用 typename 而不是 class
+         */
+    }
+}
+
+namespace Practise_16_18 {
+    
+    void test()
+    {
+        /*
+         
+         (a) template <typename T, typename U, typename V> void f1(T, U, V);
+         (b) template <typename T> T f2(int &T);
+         (c) template <typename T> inline T foo(T, unsigned int*);
+         (d) template <typename T> void f4(T, T);
+         (e) typedef char Ctype;
+         template <typename T> T f5(T a);
+         
+         */
+    }
+}
+
+
+
 
 int main(int argc, const char * argv[]) {
     
