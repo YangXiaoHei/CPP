@@ -660,15 +660,80 @@ namespace Practise_16_12 {
 }
 
 namespace Practise_16_13 {
+    void test()
+    {
+        /**
+         *  相等性，大小比较，因为数组类型迭代器应该支持逻辑上的加减和大小比较
+         */
+    }
+}
 
-   
+namespace Practise_16_14 {
+    
+    typedef string::size_type pos;
+    
+    template <pos H, pos W> class Screen;
+    template <pos H, pos W> ostream& operator<< (ostream&, const Screen<H, W> &);
+    template <pos H, pos W> istream& operator>> (istream&, Screen<H, W> &);
+    
+    template <pos H, pos W>
+    class Screen
+    {
+        friend ostream& operator<< <H, W>(ostream&, const Screen<H, W> &);
+        friend istream& operator>> <H, W>(istream&, Screen<H, W> &);
+        
+    public:
+        Screen() = default;
+        Screen(char c) : content(H * W, c) {}
+        char get() const { return content[cur]; }
+        char get(pos r, pos c) const { return content[r * W + c]; }
+        Screen& move(pos r, pos c) { cur = r * W + c; return *this; }
+        Screen& set(char c) { content[cur++] = c; cur = std::min(cur, W * H); return *this; }
+        Screen& set(pos r, pos c, char ch) { content[r * W + c] = ch; return *this; }
+        
+    private:
+        string content;
+        pos cur = 0;
+    };
+    
+    template <pos H, pos W>
+    ostream& operator<< (ostream& os, const Screen<H, W> &s)
+    {
+        for (pos i = 0; i < H; ++i) {
+            for (pos j = 0; j < W; ++j) {
+                os << s.get(i, j);
+            }
+            os << endl;
+        }
+        os << endl;
+        return os;
+    }
+    
+    template <pos H, pos W>
+    istream& operator>> (istream& is, Screen<H, W> &screen)
+    {
+        string s;
+        is >> s;
+        for (char c : s)
+        {
+            screen.set(c);
+        }
+        return is;
+    }
+    
+    void test()
+    {
+        Screen<4, 4> ss;
+        cin >> ss;
+        cout << ss;
+    }
 }
 
 
 
 int main(int argc, const char * argv[]) {
     
-    Practise_16_12::test();
+    Practise_16_14::test();
     
     return 0;
 }
