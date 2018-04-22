@@ -409,14 +409,13 @@ namespace Practise_16_12 {
     class Blob
     {
         friend class BlobPtr<T>;
+        
     public:
         typedef typename vector<T>::size_type size_type;
         
         Blob();
         Blob(initializer_list<T> il);
-        
         T& operator[](size_t n);
-        
         size_type size() const { return data->size(); }
         bool empty() const { return data->empty(); }
         void push_back(const T&);
@@ -426,7 +425,7 @@ namespace Practise_16_12 {
         T& back();
         const T& front() const;
         const T& back() const;
-        
+
         BlobPtr<T> begin();
         BlobPtr<T> end();
         
@@ -510,26 +509,23 @@ namespace Practise_16_12 {
         return (*data)[n];
     }
     
+    template <typename T> bool operator==(const BlobPtr<T>&, const BlobPtr<T> &);
+    template <typename T> bool operator!=(const BlobPtr<T>&, const BlobPtr<T> &);
+    template <typename T> bool operator<(const BlobPtr<T>&, const BlobPtr<T> &);
+    template <typename T> bool operator>(const BlobPtr<T>&, const BlobPtr<T> &);
+    template <typename T> bool operator<=(const BlobPtr<T>&, const BlobPtr<T> &);
+    template <typename T> bool operator>=(const BlobPtr<T>&, const BlobPtr<T> &);
+    
     
     template <typename T>
     class BlobPtr
     {
-        friend bool operator==(const BlobPtr &a, const BlobPtr &b)
-        {
-            return a.cur == b.cur;
-        }
-        friend bool operator!=(const BlobPtr &a, const BlobPtr &b)
-        {
-            return a.cur != b.cur;
-        }
-        friend bool operator<(const BlobPtr &a, const BlobPtr &b)
-        {
-            return a.cur < b.cur;
-        }
-        friend bool operator>(const BlobPtr &a, const BlobPtr &b)
-        {
-            return a.cur > b.cur;
-        }
+        friend bool operator== <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
+        friend bool operator!= <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
+        friend bool operator< <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
+        friend bool operator> <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
+        friend bool operator<= <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
+        friend bool operator>= <T>(const BlobPtr<T> &a, const BlobPtr<T> &b);
         
         // 加法？
     public:
@@ -624,6 +620,31 @@ namespace Practise_16_12 {
         return BlobPtr<T>(*this, data->size());
     }
     
+    template <typename T> bool operator==(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur == b.cur;
+    }
+    template <typename T> bool operator!=(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur != b.cur;
+    }
+    template <typename T> bool operator<(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur < b.cur;
+    }
+    template <typename T> bool operator>(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur > b.cur;
+    }
+    template <typename T> bool operator<=(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur <= b.cur;
+    }
+    template <typename T> bool operator>=(const BlobPtr<T>&a, const BlobPtr<T> &b)
+    {
+        return a.cur >= b.cur;
+    }
+    
     void test()
     {
         Blob<string> bs = { "yanghan", "lijie", "chenyanyu", "xixi", "haha" };
@@ -636,6 +657,11 @@ namespace Practise_16_12 {
             cout << *it << endl;
         }
     }
+}
+
+namespace Practise_16_13 {
+
+   
 }
 
 
