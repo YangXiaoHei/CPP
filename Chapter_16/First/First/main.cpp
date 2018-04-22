@@ -756,6 +756,10 @@ namespace Practise_16_16 {
         
         Vec();
         Vec(initializer_list<T> il);
+        Vec& operator=(const Vec&);
+        Vec(const Vec&);
+        Vec(Vec &&);
+        Vec& operator=(Vec &&);
         ~Vec();
         
         size_type size() const { return first_free - elements; }
@@ -785,10 +789,63 @@ namespace Practise_16_16 {
         
         void chk_alloc() { if (size() == capacity()) realloc(); }
         void chk_empty() const { if (empty()) throw out_of_range("empty Vec!"); }
+        pair<T *, T *> alloc_n_copy(const T *b, const T *e);
+        pair<T *, T *> alloc_n_move(const T *b, const T *e);
         void realloc();
     };
     
     template <typename T> allocator<T> Vec<T>::alloc;
+    
+    template <typename T>
+    pair<T *, T *> Vec<T>::alloc_n_copy(const T *b, const T *e)
+    {
+        auto data = alloc.allocate(e - b);
+        return { data, uninitialized_copy(b, e, data) };
+    }
+    
+    template <typename T>
+    pair<T *, T *> Vec<T>::alloc_n_move(const T *b, const T *e)
+    {
+        auto data = alloc.allocate(e - b);
+        return { data, uninitialized_copy(make_move_iterator(b),
+                                          make_move_iterator(e), data) };
+    }
+    
+    template <typename T>
+    Vec<T>& Vec<T>::operator=(const Vec& v)
+    {
+        auto pair = alloc_n_copy(v.cbegin(), v.cend());
+        free();
+        elements = pair.first;
+        first_free = cap = pair.second;
+        return *this;
+    }
+    
+    template <typename T>
+    Vec<T>::Vec(const Vec& v)
+    {
+        auto pair = alloc_n_copy(v.cbegin(), v.cend());
+        elements = pair.first;
+        first_free = cap = pair.second;
+    }
+    
+    template <typename T>
+    Vec<T>::Vec(Vec && v)
+    {
+        auto pair = alloc_n_move(v.cbegin(), v.cend());
+        elements = pair.first;
+        first_free = cap = pair.second;
+    }
+    
+    template <typename T>
+    Vec<T>& Vec<T>::operator=(Vec &&v)
+    {
+        auto pair = alloc_n_move(v.cbegin(), v.cend());
+        v.elements = v.first_free = v.cap = nullptr;
+        elements = pair.first;
+        first_free = cap = pair.second;
+        return *this;
+    }
     
     template <typename T>
     void Vec<T>::realloc()
@@ -873,8 +930,14 @@ namespace Practise_16_16 {
     
     void test()
     {
-        Vec<string> v{"a", "b", "c", "d", "e", "f"};
-        cout << v << endl;
+        Vec<string> v1{"a", "b", "c", "d", "e", "f"}, v2{"1", "2", "3", "4", "5"};
+        Vec<string> v3 = v1;
+        
+        v1.push_back("10");
+        
+        cout << v1 << endl;
+        cout << v2 << endl;
+        cout << v3 << endl;
     }
 }
 
