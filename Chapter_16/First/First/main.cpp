@@ -729,11 +729,159 @@ namespace Practise_16_14 {
     }
 }
 
+namespace Practise_16_15 {
+    void test()
+    {
+        /**
+         *  见 Practise_16_14
+         */
+    }
+}
+
+namespace Practise_16_16 {
+    
+    template <typename T> class Vec;
+    
+    template <typename T> ostream& operator<< (ostream &, const Vec<T> &);
+    template <typename T> istream& operator>> (istream&, Vec<T>&);
+    
+    template <typename T>
+    class Vec
+    {
+        friend ostream& operator<< <T>(ostream& os, const Vec<T> &a);
+        friend istream& operator>> <T>(istream& is, Vec<T> &a);
+        
+    public:
+        typedef typename vector<T>::size_type size_type;
+        
+        Vec();
+        Vec(initializer_list<T> il);
+        ~Vec();
+        
+        size_type size() const { return first_free - elements; }
+        size_type capacity() const { return cap - elements; }
+        bool empty() const { return size() == 0; }
+        
+        T *begin() { return elements; }
+        T *end() { return first_free; }
+        const T *cbegin() const { return elements; }
+        const T *cend() const { return first_free; }
+        
+        T& front() { chk_empty(); return *elements; }
+        T& back() { chk_empty(); return *(first_free - 1); }
+        
+        const T& front() const { chk_empty(); return *elements; }
+        const T& back() const { chk_empty(); return *(first_free - 1); }
+        
+        void push_back(const T &);
+        void push_back(T &&);
+        void free();
+        
+    private:
+        static allocator<T> alloc;
+        T *elements;
+        T *first_free;
+        T *cap;
+        
+        void chk_alloc() { if (size() == capacity()) realloc(); }
+        void chk_empty() const { if (empty()) throw out_of_range("empty Vec!"); }
+        void realloc();
+    };
+    
+    template <typename T> allocator<T> Vec<T>::alloc;
+    
+    template <typename T>
+    void Vec<T>::realloc()
+    {
+        size_type new_cap = size() ? size() * 2 : 1;
+        auto data = alloc.allocate(new_cap);
+        auto dest = data;
+        auto src = elements;
+        for (size_type i = 0; i < size(); ++i)
+        {
+            alloc.construct(dest++, std::move(*src++));
+        }
+        alloc.deallocate(elements, cap - elements);
+        elements = data;
+        first_free = dest;
+        cap =  elements + new_cap;
+    }
+    
+    template <typename T>
+    void Vec<T>::free()
+    {
+        auto p = first_free;
+        while (p != elements)
+        {
+            alloc.destroy(--p);
+        }
+        alloc.deallocate(elements, cap - elements);
+    }
+    
+    template <typename T>
+    void Vec<T>::push_back(const T &a)
+    {
+        chk_alloc();
+        alloc.construct(first_free++, a);
+    }
+    
+    template <typename T>
+    void Vec<T>::push_back(T &&a)
+    {
+        chk_alloc();
+        alloc.construct(first_free++, a);
+    }
+    
+    template <typename T>
+    Vec<T>::Vec() : elements(nullptr), first_free(nullptr), cap(nullptr)
+    {
+    }
+    
+    template <typename T>
+    Vec<T>::Vec(initializer_list<T> il) : Vec()
+    {
+        for (const T &i : il)
+        {
+            push_back(i);
+        }
+    }
+    
+    template <typename T>
+    Vec<T>::~Vec<T>()
+    {
+        free();
+    }
+    
+    template <typename T>
+    ostream& operator<< (ostream& os, const Vec<T>& v)
+    {
+        for (auto b = v.elements; b != v.first_free; b++)
+        {
+            os << *b << " ";
+        }
+        return os;
+    }
+    
+    template <typename T>
+    istream& operator>> (istream& is, Vec<T>& v)
+    {
+        T elem;
+        is >> elem;
+        v.push_back(elem);
+        return is;
+    }
+    
+    void test()
+    {
+        Vec<string> v{"a", "b", "c", "d", "e", "f"};
+        cout << v << endl;
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
     
-    Practise_16_14::test();
+    Practise_16_16::test();
     
     return 0;
 }
