@@ -1005,12 +1005,93 @@ namespace Practise_16_19 {
     }
 }
 
+namespace Practise_16_20 {
+    template <typename T>
+    void print(const T &a)
+    {
+        for (auto it = a.begin(); it != a.end(); ++it)
+        {
+            cout << *it << endl;
+        }
+    }
+    void test()
+    {
+        vector<string> s{"1", "2", "3", "4"};
+        print(s);
+    }
+}
 
+namespace YH7 {
+    class DebugDelete
+    {
+    public:
+        DebugDelete(ostream &s = cerr) : os(s) {}
+        template <typename T> void operator()(T *p) const
+        {
+            os << "deleting unique_ptr" << endl;
+            delete p;
+        }
+    private:
+        ostream &os;
+    };
+    void test1()
+    {
+        unique_ptr<int, DebugDelete> p(new int, DebugDelete());
+        
+        unique_ptr<string, DebugDelete> sp(new string, DebugDelete());
+        
+    }
+    void test()
+    {
+        double *p = new double;
+        DebugDelete d;
+        d(p);
+        
+        int *ip = new int;
+        DebugDelete()(ip);  // 在一个临时 DebugDelete 对象上调用 operator()(int *)
+    }
+}
+
+namespace YH8 {
+    template <typename T>
+    class Blob
+    {
+        template <typename It> Blob(It b, It e);
+    };
+    void test()
+    {
+        
+    }
+}
+
+namespace Practise_16_21 {
+    class DebugDelete
+    {
+    public:
+        DebugDelete(ostream &os = cerr) : o(os) {}
+        template <typename T> void operator()(T *p)
+        {
+            o << "delete unique_ptr by" << __PRETTY_FUNCTION__ << endl;
+            delete p;
+        }
+    private:
+        ostream &o;
+    };
+    void test()
+    {
+        double *p = new double;
+        DebugDelete d;
+        d(p);
+        
+        int *ip = new int;
+        DebugDelete()(ip);
+    }
+}
 
 
 int main(int argc, const char * argv[]) {
     
-    Practise_16_19::test();
+    Practise_16_21::test();
     
     return 0;
 }
