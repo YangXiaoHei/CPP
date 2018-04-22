@@ -1089,6 +1089,28 @@ namespace Practise_16_21 {
 }
 
 
+namespace Practise_16_25 {
+    
+    void test()
+    {
+        /**
+         *  extern template class vector<string>;
+            当编译器遇到 extern 模版声明时，它不会在本文件中生成实例化代码，将一个实例化声明为 extern 就表示承诺在程序的其他位置有该实例化的一个定义
+         
+         template class vector<Sales_data>;
+         实例化定义实例化了 vector 关于 Sales_data 的所有成员
+         */
+    }
+}
+
+namespace Practise_16_27 {
+    
+    void test()
+    {
+        
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
     Practise_16_21::test();
