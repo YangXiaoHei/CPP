@@ -308,8 +308,8 @@ namespace YH3 {
     }
     void test()
     {
-        Blob<int> b = {1, 2, 3};
-        Blob<int> c = {3, 4, 5};
+        Blob<int> b = { 1, 2, 3 };
+        Blob<int> c = { 3, 4, 5 };
     }
 }
 
@@ -358,23 +358,291 @@ namespace YH5 {
     {
         typedef A<string> strA;
         twin<int> win_loss; // win_loss 是一个 pair<int, int>
+    }
+}
+
+namespace Practise_16_09 {
+    void test()
+    {
+        /**
+         *  函数模版：将参数类型泛化，只有当被调用时才根据实参类型实例化函数定义的函数
+            类模版：将类用到的参数类型泛化，只有当该类被使用时才实例化类针对某中类型的定义
+         */
+    }
+}
+
+namespace Practise_16_10 {
+    void test()
+    {
+        /**
+         *  编译器会重写整个类模版，针对指定的类型生成对应的类定义代码
+         */
+    }
+}
+
+namespace Practise_16_11 {
+    /*
+    template <typename T> class ListItem;
+    template <typename T>
+    class List
+    {
+    public:
+        List<T>() = default;
+        List<T>(const List<T> &);
+        List<T>& operator=(const List<T> &);
+        ~List();
+        void insert(ListItem<T> *ptr, T value);
+    private:
+        ListItem<T> *front, *end;
+    };
+    */
+    void test()
+    {
         
+    }
+}
+
+namespace Practise_16_12 {
+    
+    template <typename X> class BlobPtr;
+    template <typename T>
+    class Blob
+    {
+        friend class BlobPtr<T>;
+    public:
+        typedef typename vector<T>::size_type size_type;
         
+        Blob();
+        Blob(initializer_list<T> il);
         
+        T& operator[](size_t n);
         
+        size_type size() const { return data->size(); }
+        bool empty() const { return data->empty(); }
+        void push_back(const T&);
+        void push_back(T&&);
+        void pop_back();
+        T& front();
+        T& back();
+        const T& front() const;
+        const T& back() const;
+        
+        BlobPtr<T> begin();
+        BlobPtr<T> end();
+        
+    private:
+        shared_ptr<vector<T>> data;
+    };
+    
+    template <typename T>
+    Blob<T>::Blob() : data(make_shared<vector<T>>())
+    {
+    }
+    
+    template <typename T>
+    Blob<T>::Blob(initializer_list<T> il) : data(make_shared<vector<T>>(il))
+    {
+    }
+    
+    template <typename T>
+    void Blob<T>::push_back(const T& d)
+    {
+        data->push_back(d);
+    }
+    
+    template <typename T>
+    void Blob<T>::push_back(T &&d)
+    {
+        data->push_back(d);
+    }
+    
+    template <typename T>
+    void Blob<T>::pop_back()
+    {
+        if (data->empty()) {
+            throw out_of_range("pop_back on empty Blob");
+        }
+        data->pop_back();
+    }
+    
+    template <typename T>
+    T& Blob<T>::front()
+    {
+        if (data->empty()) {
+            throw out_of_range("front on empty Blob");
+        }
+        return data->front();
+    }
+    
+    template <typename T>
+    const T& Blob<T>::front() const
+    {
+        if (data->empty()) {
+            throw out_of_range("front on empty Blob");
+        }
+        return data->front();
+    }
+    
+    template <typename T>
+    T& Blob<T>::back()
+    {
+        if (data->empty()) {
+            throw out_of_range("back on empty Blob");
+        }
+        return data->back();
+    }
+    
+    template <typename T>
+    const T& Blob<T>::back() const
+    {
+        if (data->empty()) {
+            throw out_of_range("back on empty Blob");
+        }
+        return data->back();
+    }
+    
+    template <typename T>
+    T& Blob<T>::operator[](size_t n)
+    {
+        if (n >= data->size()) {
+            throw out_of_range("[] out of range");
+        }
+        return (*data)[n];
+    }
+    
+    
+    template <typename T>
+    class BlobPtr
+    {
+        friend bool operator==(const BlobPtr &a, const BlobPtr &b)
+        {
+            return a.cur == b.cur;
+        }
+        friend bool operator!=(const BlobPtr &a, const BlobPtr &b)
+        {
+            return a.cur != b.cur;
+        }
+        friend bool operator<(const BlobPtr &a, const BlobPtr &b)
+        {
+            return a.cur < b.cur;
+        }
+        friend bool operator>(const BlobPtr &a, const BlobPtr &b)
+        {
+            return a.cur > b.cur;
+        }
+        
+        // 加法？
+    public:
+        BlobPtr(Blob<T> b);
+        BlobPtr(Blob<T> b, size_t n);
+        
+        BlobPtr& operator++();
+        BlobPtr& operator--();
+        BlobPtr operator++(int);
+        BlobPtr operator--(int);
+        T& operator*();
+        
+    private:
+        size_t cur;
+        weak_ptr<vector<T>> wptr;
+        shared_ptr<vector<T>> check(size_t n, const string &msg);
+    };
+    
+    template <typename T>
+    shared_ptr<vector<T>> BlobPtr<T>::check(size_t n, const string &msg)
+    {
+        auto ret = wptr.lock();
+        if (!ret)
+        {
+            throw runtime_error("data already released");
+        }
+        if (n >= ret->size())
+        {
+            throw out_of_range(msg);
+        }
+        return ret;
+    }
+    
+    template <typename T>
+    BlobPtr<T>::BlobPtr(Blob<T> b) : wptr(b.data)
+    {
+    }
+    
+    template <typename T>
+    BlobPtr<T>::BlobPtr(Blob<T> b, size_t n) : wptr(b.data), cur(n)
+    {
+    }
+    
+    template <typename T>
+    BlobPtr<T>& BlobPtr<T>::operator++()
+    {
+        check(cur, "++ out of range");
+        ++cur;
+        return *this;
+    }
+    
+    template <typename T>
+    BlobPtr<T>& BlobPtr<T>::operator--()
+    {
+        --cur; // 溢出
+        check(cur, "-- out of range");
+        return *this;
+    }
+    
+    template <typename T>
+    BlobPtr<T> BlobPtr<T>::operator++(int)
+    {
+        BlobPtr old = *this;
+        ++*this;
+        return old;
+    }
+    
+    template <typename T>
+    BlobPtr<T> BlobPtr<T>::operator--(int)
+    {
+        BlobPtr old = *this;
+        --*this;
+        return old;
+    }
+    
+    template <typename T>
+    T& BlobPtr<T>::operator*()
+    {
+        auto ret = check(cur, "deference out of range");
+        return (*ret)[cur];
+    }
+    
+    template <typename T>
+    BlobPtr<T> Blob<T>::begin()
+    {
+        return BlobPtr<T>(*this);
+    }
+    
+    template <typename T>
+    BlobPtr<T> Blob<T>::end()
+    {
+        return BlobPtr<T>(*this, data->size());
+    }
+    
+    void test()
+    {
+        Blob<string> bs = { "yanghan", "lijie", "chenyanyu", "xixi", "haha" };
+        for (auto it = bs.begin(); it != bs.end(); ++it)
+        {
+            for (auto &c : *it)
+            {
+                c = toupper(c);
+            }
+            cout << *it << endl;
+        }
     }
 }
 
 
 
-
-
-
-
-
 int main(int argc, const char * argv[]) {
     
-    YH3::test();
+    Practise_16_12::test();
     
     return 0;
 }
