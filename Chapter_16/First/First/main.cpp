@@ -832,18 +832,24 @@ namespace Practise_16_16 {
     template <typename T>
     Vec<T>::Vec(Vec && v)
     {
-        auto pair = alloc_n_move(v.cbegin(), v.cend());
-        elements = pair.first;
-        first_free = cap = pair.second;
+        if (this != &v)
+        {
+            auto pair = alloc_n_move(v.cbegin(), v.cend());
+            elements = pair.first;
+            first_free = cap = pair.second;
+        }
     }
     
     template <typename T>
     Vec<T>& Vec<T>::operator=(Vec &&v)
     {
-        auto pair = alloc_n_move(v.cbegin(), v.cend());
-        v.elements = v.first_free = v.cap = nullptr;
-        elements = pair.first;
-        first_free = cap = pair.second;
+        if (this != &v)
+        {
+            auto pair = alloc_n_move(v.cbegin(), v.cend());
+            v.elements = v.first_free = v.cap = nullptr;
+            elements = pair.first;
+            first_free = cap = pair.second;
+        }
         return *this;
     }
     
@@ -867,12 +873,15 @@ namespace Practise_16_16 {
     template <typename T>
     void Vec<T>::free()
     {
-        auto p = first_free;
-        while (p != elements)
+        if (elements)
         {
-            alloc.destroy(--p);
+            auto p = first_free;
+            while (p != elements)
+            {
+                alloc.destroy(--p);
+            }
+            alloc.deallocate(elements, cap - elements);
         }
-        alloc.deallocate(elements, cap - elements);
     }
     
     template <typename T>
