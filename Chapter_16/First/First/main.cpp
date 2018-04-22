@@ -991,12 +991,26 @@ namespace Practise_16_18 {
     }
 }
 
+namespace Practise_16_19 {
+    template <typename T>
+    void print(const T &a)
+    {
+        for (typename T::size_type i = 0; i < a.size(); ++i)
+            cout << a[i] << endl;
+    }
+    void test()
+    {
+        vector<string> s{"1", "2", "3", "4"};
+        print(s);
+    }
+}
+
 
 
 
 int main(int argc, const char * argv[]) {
     
-    Practise_16_16::test();
+    Practise_16_19::test();
     
     return 0;
 }
