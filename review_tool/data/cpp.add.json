@@ -1,66 +1,35 @@
 {
-    "顺序容器" : 
+    "IO类" : 
     [
         {
-            "desc" : "对于容器的 assign(b, e), assign(il), assign(n, t) 方法，分别写代码使用之",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "如何用 vector<double> 初始化一个 list<int>? 如何用 vector<double> 初始化 vector<int> 呢? 写代码示范之",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "写代码比较一个 list<int> 和 vector<int> 是否相等",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-
-        {
-            "desc" : "两个容器的比较有何限制?",
-            "diff" : 1,
-            "cost_time" : 1
-        },
-        {
-            "desc" : "emplace_back() 和 push_back() 有什么区别?",
-            "diff" : 1,
-            "cost_time" : 2
-        },
-        {
-            "desc" : "容器的 insert(p, t), insert(p, n, t), insert(p, b, e), insert(p, il), 分别写代码使用他们",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "使用 insert(p, t) 的返回值, 模拟出 push_front 的效果, 写代码示意这个模拟",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "容器的 emplace(p, args), emplace_back(args), emplace_front(args) 分别写代码使用他们",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "写代码使用 begin(), end(), front(), back() 分别访问容器中的元素",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "1, 写代码使用 begin(), end(), front(), back() 分别访问容器中的元素; 2, 使其返回引用，然后修改容器中的值",
-            "diff" : 1,
-            "cost_time" : 5
-        },
-        {
-            "desc" : "at() 和 [x] 的区别是什么?",
-            "diff" : 1,
-            "cost_time" : 1
-        },
-        {
-            "desc" : "分别使用 pop_back(), pop_front(), erase(p), erase(b, e), clear() 来删除容器中的元素, 要重点关心 erase() 的返回值是什么",
+            "desc" : "分别使用 ends, endl, flush 三种方式刷新输出缓冲区",
             "diff" : 1,
             "cost_time" : 10
+        },
+        {
+            "desc" : "unitbuf 操作符和 nounitbuf 操作符的作用是什么? 写代码示意用法",
+            "diff" : 1,
+            "cost_time" : 10
+        },
+        {
+            "desc" : "对 ifstream 和 ofstream 对象分别使用构造函数打开文件, open() 打开文件, is_open() 测试文件是否打开, 以及 close() 关闭文件流",
+            "diff" : 1,
+            "cost_time" : 10
+        },
+        {
+            "desc" : "文件打开模式的 in, out, app, trunc, binary, ate 分别怎么用, 代码示意之",
+            "diff" : 1,
+            "cost_time" : 30
+        },
+        {
+            "desc" : "ofstream 和 ifstream 打开文件默认行为是什么? 如何改变?",
+            "diff" : 1,
+            "cost_time" : 30
+        },
+        {
+            "desc" : "使用 ostringstream 和 istringstream 完成书中的例子",
+            "diff" : 1,
+            "cost_time" : 20
         }
     ]
 }
