@@ -12,6 +12,6 @@ bk_file="${data_path}/${topic}.bk.json"
 [ ! -f ${input_file} ] && echo "${input_file} not exist!" && exit 1
 
 total_num=5
-total_cost=120
+total_cost=200
 
 ./${bin_path}/specify_select ${input_file} ${bk_file} ${total_num} ${total_cost}
